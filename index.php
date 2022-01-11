@@ -44,7 +44,8 @@
 			</div>
 		</div>
 
-		<div class="m-4 row" id="nowPlayingPane">    
+
+		<div class="mt-4 ml-2 mr-2 row" id="nowPlayingPane">    
 			<div class="accordion" id="accordionExample">
 				<div class="accordion-item">
 					<h2 class="accordion-header" id="headingOne">
@@ -55,10 +56,10 @@
 					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 						<div class="accordion-body">						
 							<div class="row">
-								<div class="col-1 p-0">
+								<div class="col-3 p-0">
 									<img class="img-fluid img-thumbnail" id="nowPlayingImage" alt="Now playing artwork" />
 								</div>			
-								<div class="col-11 text-start">
+								<div class="col-9 text-start">
 									<h5 id="nowPlayingTrack"></h5>
 									<p id="nowPlayingArtist"></p>
 									<strong id="nowPlayingTimestamp"></strong>
@@ -69,6 +70,7 @@
 				</div>
 			</div>			
 		</div>
+
 
 		<div class="m-2 row" id="resultPane" style="display: none;">
 			<div class="col-12">
@@ -84,122 +86,119 @@
 			</div>
 		</div>
 	</div>
+
+
 	<script>
+	
+		var auth_token = <?php echo "'".trim($auth_token)."'"; ?>;
+		$(document).ready(function() {
 
-	var auth_token = <?php echo "'".trim($auth_token)."'"; ?>;
+			if (auth_token === "") {
+				alert("Find Joe he needs to log in again");
+				$(".btn").attr("disabled","disabled");
+			}
+			else {
+				SendAPIRequest("https://api.spotify.com/v1/me", "GET", null, (response) => {
+					//console.log(response)
+					$("#subHeader").html("Connected to "+response.display_name+"'s Spotify");
+					GetCurrentTrack();
+				});
+			}
+		});
 
-	$(document).ready(function() {
+		function GetCurrentTrack() {
+			SendAPIRequest("https://api.spotify.com/v1/me/player/currently-playing", "GET", null, (response) => {
+				console.log(response);
 
-		if (auth_token === "") {
-			alert("Find Joe he needs to log in again");
-			$(".btn").attr("disabled","disabled");
-		}
-		else {
-			SendAPIRequest("https://api.spotify.com/v1/me", "GET", null, (response) => {
-				//console.log(response)
-				$("#subHeader").html("Connected to "+response.display_name+"'s Spotify");
-				GetCurrentTrack();
+				var meta = response;
+				var track = meta.item;
+				
+				$("#nowPlayingImage").attr("src", track.album.images[0].url);
+
+				var link ="<a href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
+				$("#nowPlayingTrack").html(link);
+
+				var artists = track.artists.map(function(a) { return a.name}).join(", ");
+				$("#nowPlayingArtist").html(artists);
+
+				var time = track.duration_ms / 1000;
+				var minutes = Math.floor(time / 60);
+				var seconds = Math.round(time - (minutes * 60));
+				$("#nowPlayingTimestamp").html(minutes + ":" + seconds);
+
+				var triggerAgain = track.duration_ms - meta.progress_ms + 1000;
+				setTimeout(GetCurrentTrack, triggerAgain);
 			});
 		}
-	});
 
-	function GetCurrentTrack() {
-		SendAPIRequest("https://api.spotify.com/v1/me/player/currently-playing", "GET", null, (response) => {
-			console.log(response);
-
-			var meta = response;
-			var track = meta.item;
-			
-			$("#nowPlayingImage").attr("src", track.album.images[0].url);
-
-			var link ="<a href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
-			$("#nowPlayingTrack").html(link);
-
-			var artists = track.artists.map(function(a) { return a.name}).join(", ");
-			$("#nowPlayingArtist").html(artists);
-
-			var time = track.duration_ms / 1000;
-			var minutes = Math.floor(time / 60);
-			var seconds = Math.round(time - (minutes * 60));
-			$("#nowPlayingTimestamp").html(minutes + ":" + seconds);
-
-			var triggerAgain = track.duration_ms - meta.progress_ms + 1000;
-			setTimeout(GetCurrentTrack, triggerAgain);
-		});
-	}
-
-	function submitToQueue() {
-		var trackLink = $("#trackLink").val();
-		if (trackLink !== undefined && trackLink !== null && trackLink !== "") {
-			var urlParts = trackLink.split("/");
-			var trackUri = urlParts[urlParts.length-1];
-			if (trackUri !== "")
-			{
-				var trackId = trackUri.split("?")[0];
-				verifyTrackId(trackId);
+		function submitToQueue() {
+			var trackLink = $("#trackLink").val();
+			if (trackLink !== undefined && trackLink !== null && trackLink !== "") {
+				var urlParts = trackLink.split("/");
+				var trackUri = urlParts[urlParts.length-1];
+				if (trackUri !== "")
+				{
+					var trackId = trackUri.split("?")[0];
+					verifyTrackId(trackId);
+				}
+				else 
+				{
+					SomethingWentWrong();
+				}
 			}
 			else 
 			{
 				SomethingWentWrong();
 			}
 		}
-		else 
-		{
-			SomethingWentWrong();
+		
+		function verifyTrackId(trackId) {
+			SendAPIRequest("https://api.spotify.com/v1/tracks/"+trackId, "GET", null, processTrackInfoResponse);
 		}
-	}
-	
-	function verifyTrackId(trackId) {
-		SendAPIRequest("https://api.spotify.com/v1/tracks/"+trackId, "GET", null, processTrackInfoResponse);
-	}
 
-	function processTrackInfoResponse(track) {
-		if (track != null){
-			$("#queuedTrack").html(track.name)
+		function processTrackInfoResponse(track) {
+			if (track != null) {
+				$("#queuedTrack").html(track.name)
 
-			var artists = track.artists.map(function(a) { return a.name}).join(", ");
-			$("#queuedArtist").html(artists)
+				var artists = track.artists.map(function(a) { return a.name}).join(", ");
+				$("#queuedArtist").html(artists)
 
-			var image = track.album.images[0].url;
-			$("#queuedImage").attr("src", image);
+				var image = track.album.images[0].url;
+				$("#queuedImage").attr("src", image);
 
-			$("#resultPane").show();
+				$("#resultPane").show();
 
-			$("#queuePane").hide();
-			$("#helpPane").hide();
-			$("#nowPlayingPane").hide();
+				$("#queuePane").hide();
+				$("#helpPane").hide();
+				$("#nowPlayingPane").hide();
 
-			submitToSpotifyQueue(track);
+				console.log(track);
+				SendAPIRequest("https://api.spotify.com/v1/me/player/queue?uri="+track.uri, "POST", null, (response) => console.log(response));
+			}
+			else {
+				SomethingWentWrong();
+			}
 		}
-		else {
-			SomethingWentWrong();
-		}
-	}
 
-	function submitToSpotifyQueue(track) {
-		console.log(track);
-		SendAPIRequest("https://api.spotify.com/v1/me/player/queue?uri="+track.uri, "POST", null, (response) => console.log(response));
-	}
-
-	function SomethingWentWrong() {
-		alert("O no hed");
-	}
-	
-	function SendAPIRequest(Url, Method, Data, Callback) {
-		$.ajax({
-		url: Url,
-		type: Method,
-		beforeSend: function(request) {
-		  request.setRequestHeader('Authorization', 'Bearer ' + auth_token);
-		  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		},
-		data: Data,
-		success: Callback,
-		error: function (xhr, ajaxOptions, thrownError) {
-		  SomethingWentWrong();
+		function SomethingWentWrong() {
+			alert("O no hed");
 		}
-	  });
-	}
+		
+		function SendAPIRequest(Url, Method, Data, Callback) {
+			$.ajax({
+				url: Url,
+				type: Method,
+				beforeSend: function(request) {
+					request.setRequestHeader('Authorization', 'Bearer ' + auth_token);
+					request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				},
+				data: Data,
+				success: Callback,
+				error: function (xhr, ajaxOptions, thrownError) {
+					SomethingWentWrong();
+				}
+			});
+		}
 
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
