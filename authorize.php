@@ -30,9 +30,7 @@
 				//Refresh our token because it has expired
 				$refresh_content = file_get_contents($refresh_filename, true);
 				
-				unlink($token_filename);
-				unlink($expiry_filename);
-				unlink($refresh_filename);
+				DeleteTokens($token_filename, $expiry_filename, $refresh_filename);
 				
 				$response = GetAccessTokenFromRefresh($client_id, $client_secret, $redirect_uri, $refresh_content);
 				$authorized = ProcessAccessTokenResponse($response, $token_filename, $expiry_filename, $refresh_filename);
@@ -50,6 +48,10 @@
 		
 		//echo "Authorization Complete ";
 		echo $authorized;
+	}
+	else if (isset($_GET['logout']))
+	{
+		DeleteTokens($token_filename, $expiry_filename, $refresh_filename);
 	}
 	else if ($authorized == null || isset($_GET['reset'])) 
 	{
@@ -117,6 +119,12 @@
 		fwrite($file, $content);
 		fclose($file);
 	}
-	
+
+	function DeleteTokens($token_filename, $expiry_filename, $refresh_filename)
+	{
+		unlink($token_filename);
+		unlink($expiry_filename);
+		unlink($refresh_filename);
+	}
 ?>
 
