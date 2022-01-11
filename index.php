@@ -44,6 +44,32 @@
 			</div>
 		</div>
 
+		<div class="m-4 row" id="nowPlayingPane">    
+			<div class="accordion" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingOne">
+					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+						Currently Playing
+					</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+						<div class="accordion-body">						
+							<div class="row">
+								<div class="col-1 p-0">
+									<img class="img-fluid img-thumbnail" id="nowPlayingImage" alt="Now playing artwork" />
+								</div>			
+								<div class="col-11 text-start">
+									<h5 id="nowPlayingTrack"></h5>
+									<p id="nowPlayingArtist"></p>
+									<strong id="nowPlayingTimestamp"></strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+
 		<div class="m-2 row" id="resultPane" style="display: none;">
 			<div class="col-12">
 				<div class="card">
@@ -70,11 +96,37 @@
 		}
 		else {
 			SendAPIRequest("https://api.spotify.com/v1/me", "GET", null, (response) => {
-				console.log(response)
+				//console.log(response)
 				$("#subHeader").html("Connected to "+response.display_name+"'s Spotify");
+				GetCurrentTrack();
 			});
 		}
 	});
+
+	function GetCurrentTrack() {
+		SendAPIRequest("https://api.spotify.com/v1/me/player/currently-playing", "GET", null, (response) => {
+			console.log(response);
+
+			var meta = response;
+			var track = meta.item;
+			
+			$("#nowPlayingImage").attr("src", track.album.images[0].url);
+
+			var link ="<a href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
+			$("#nowPlayingTrack").html(link);
+
+			var artists = track.artists.map(function(a) { return a.name}).join(", ");
+			$("#nowPlayingArtist").html(artists);
+
+			var time = track.duration_ms / 1000;
+			var minutes = Math.floor(time / 60);
+			var seconds = Math.round(time - (minutes * 60));
+			$("#nowPlayingTimestamp").html(minutes + ":" + seconds);
+
+			var triggerAgain = track.duration_ms - meta.progress_ms + 1000;
+			setTimeout(GetCurrentTrack, triggerAgain);
+		});
+	}
 
 	function submitToQueue() {
 		var trackLink = $("#trackLink").val();
@@ -115,6 +167,7 @@
 
 			$("#queuePane").hide();
 			$("#helpPane").hide();
+			$("#nowPlayingPane").hide();
 
 			submitToSpotifyQueue(track);
 		}
