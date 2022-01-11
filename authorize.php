@@ -1,7 +1,7 @@
 <?php
 
 	$client_id = "046f25af5f1444a881c64cec8ec3f716";
-	$client_secret = "92b961a57ec64206943e52e1e4508018";
+	$client_secret = file_get_contents("./client_secret", true);
 	$scope = "user-read-private user-read-email user-modify-playback-state user-read-currently-playing";
 	$response_type = "code";
 	$redirect_uri = "https://joe.nkode.uk/API/spotify/authorize.php";  
