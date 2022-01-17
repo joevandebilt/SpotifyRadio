@@ -24,7 +24,7 @@
 					<button type="button" class="btn btn-primary">Enter Room</button>
 				</div>
 				<div class="col-6">
-					<button type="button" class="btn btn-secondary">Create Room</button>
+					<a href="/authorize.php" class="btn btn-secondary">Create Room</a>
 				</div>
 			</div>
 		</div>
