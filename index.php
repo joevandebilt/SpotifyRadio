@@ -15,16 +15,16 @@
 		<div class="m-2" id="controlPane">
 			<div class="row">
 				<div class="col-12">
-					<input type="text" class="form-control" placeholder="Room Code" />
+					<input type="text" class="form-control" id="RoomCode" placeholder="Room Code" />
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-6">
-					<button type="button" class="btn btn-primary">Enter Room</button>
+					<button type="button" class="btn btn-primary" onclick="RoomControls.NavigateToRoom()">Enter Room</button>
 				</div>
 				<div class="col-6">
-					<a href="/authorize.php" class="btn btn-secondary">Create Room</a>
+					<a href="/admin" class="btn btn-secondary">Create Room</a>
 				</div>
 			</div>
 		</div>

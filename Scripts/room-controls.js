@@ -1,27 +1,28 @@
-var SpotifyControls = (function($) {
-
-    var auth_token = "";
+var RoomControls = (function($) {
 
     $(document).ready(function() {
 
         //Get the room code from a hidden token or url parameter?
-        
+        APIRequest("RoomReady", null, (response) =>{ 
 
-        if (auth_token === "") {
-            $(".add-to-queue").attr("disabled","disabled");
-            somethingWentWrong();
-        }
-        else {
-            sendSpotifyAPIRequest("https://api.spotify.com/v1/me", "GET", null, (response) => {
-                //console.log(response)
-                $("#subHeader").html("Connected to "+response.display_name+"'s Spotify");
-                getCurrentTrack();
-            });
-        }
+            if (response.StatusCode != 200) {
+                $(".add-to-queue").attr("disabled","disabled");
+                $(".add-to-queue").addClass("disabled");
+                $(".add-to-queue").html("Room not Connected to Spotify");
+                $("#nowPlayingPane").hide();
+                apiError();
+            }
+            else {
+                APIRequest("GetUserInfo", null, (response) => {
+                    $("#subHeader").html("Connected to "+response.display_name+"'s Spotify");
+                    getCurrentTrack();
+                });
+            }
+        });
     });
 
     function getCurrentTrack() {
-        sendSpotifyAPIRequest("https://api.spotify.com/v1/me/player/currently-playing", "GET", null, (response) => {
+        APIRequest("GetCurrentTrack", null, (response) => {
             console.log(response);
 
             if (response != undefined) {
@@ -61,17 +62,20 @@ var SpotifyControls = (function($) {
             }
             else 
             {
-                somethingWentWrong();
+                apiError();
             }
         }
         else 
         {
-            somethingWentWrong();
+            apiError();
         }
     }
 
     function verifyTrackId(trackId) {
-        sendSpotifyAPIRequest("https://api.spotify.com/v1/tracks/"+trackId, "GET", null, processTrackInfoResponse);
+        var data = {};
+        data.TrackUri = trackId;
+
+        APIRequest("GetTrackInfo", data, processTrackInfoResponse);
     }
 
     function processTrackInfoResponse(track) {
@@ -91,31 +95,33 @@ var SpotifyControls = (function($) {
             $("#nowPlayingPane").hide();
 
             console.log(track);
-            sendSpotifyAPIRequest("https://api.spotify.com/v1/me/player/queue?uri="+track.uri, "POST", null, (response) => console.log(response));
+            var data = {
+                TrackUri: track.uri
+            };
+            APIRequest("QueueTrack", data, (response) => console.log(response));
         }
         else {
-            somethingWentWrong();
+            apiError();
         }
     }
 
-    function somethingWentWrong() {
-        //alert("O no hed");
+    function apiError(xhr, ajaxOptions, thrownError) {
+        console.log(xhr);
+        console.log(ajaxOptions);
+        console.log(thrownError);
     }
 
-    function sendSpotifyAPIRequest(Url, Method, Data, Callback) {
-        $.ajax({
-            url: Url,
-            type: Method,
-            beforeSend: function(request) {
-                request.setRequestHeader('Authorization', 'Bearer ' + auth_token);
-                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            },
-            data: Data,
-            success: Callback,
-            error: function (xhr, ajaxOptions, thrownError) {
-                somethingWentWrong();
-            }
-        });
+    function APIRequest(Action, Data, Callback) {
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        
+        //Append Room Code to Payload
+        if (Data == null) { Data = {}; }
+        Data.RoomCode = urlParams.get('RoomCode'); 
+
+        //Send the Request via the API Handler
+        APIHandler.Send("Room", Action, Data, Callback, apiError);
     }
 
     return {
@@ -130,6 +136,12 @@ var SpotifyControls = (function($) {
         },
         VerifyTrackId: function(trackId) {
             return verifyTrackId(trackId)
+        },
+        NavigateToRoom: function() {
+            var roomCode = $("#RoomCode").val();
+            if (roomCode != "") {
+                window.location = "https://spotify.nkode.uk/room/"+roomCode;
+            }
         }
     }
 

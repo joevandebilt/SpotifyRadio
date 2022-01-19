@@ -1,9 +1,9 @@
 <?php
     class DISpotify
     {
-        $scope = "user-read-private user-read-email user-modify-playback-state user-read-currently-playing";
-        $response_type = "code";
-        $redirect_uri = "https://joe.nkode.uk/API/spotify/authorize.php";  
+        const scope = "user-read-private user-read-email user-modify-playback-state user-read-currently-playing";
+        const response_type = "code";
+        const redirect_uri = "https://spotify.nkode.uk/authorize.php";  
 
         function GetClientID()
         {
@@ -14,86 +14,40 @@
         {
             return file_get_contents($_SERVER['DOCUMENT_ROOT']."/client_secret", true);
         }
-        
 
-        //Check if local file exists
-        $authorized = null;
-        $currentTime = time();
-        $token_filename = "./tokens/auth_token.txt";
-        $expiry_filename = "./tokens/auth_expire.txt";
-        $refresh_filename = "./tokens/refresh_token.txt";
-        
-        if (isset($_GET['app']))
-        {
-            if (file_exists($token_filename) && file_exists($expiry_filename) && file_exists($refresh_filename))
-            {
-                $expiry_content = intval(file_get_contents($expiry_filename, true));		
-                if ($expiry_content > $currentTime) 
-                {	
-                    //If the token is not expired return it
-                    $token_content = file_get_contents($token_filename, true);	
-                    $authorized = $token_content;
-                    //echo "Got Token ";
-                }		
-                else 
-                {
-                    //Refresh our token because it has expired
-                    $refresh_content = file_get_contents($refresh_filename, true);
-                    
-                    DeleteTokens($token_filename, $expiry_filename, $refresh_filename);
-                    
-                    $response = GetAccessTokenFromRefresh($client_id, $client_secret, $redirect_uri, $refresh_content);
-                    $authorized = ProcessAccessTokenResponse($response, $token_filename, $expiry_filename, $refresh_filename);
-                    //echo "Refreshed Token ";
-                }
-            }
-            echo $authorized;
-        }
-        else if (isset($_GET['code']))
-        {
-            $code = $_GET['code'];
-            
-            $response = GetAccessTokenFromCode($client_id, $client_secret, $redirect_uri, $code);
-            $authorized = ProcessAccessTokenResponse($response, $token_filename, $expiry_filename, $refresh_filename);
-            
-            //echo "Authorization Complete ";
-            echo $authorized;
-        }
-        else if (isset($_GET['logout']))
-        {
-            DeleteTokens($token_filename, $expiry_filename, $refresh_filename);
-        }
-        else if ($authorized == null || isset($_GET['reset'])) 
+        function RedirectToAuthScreen()
         {
             $requestUrl = "https://accounts.spotify.com/authorize";
-            $requestUrl .= "?client_id=".$client_id;
-            $requestUrl .= "&response_type=".$response_type;
-            $requestUrl .= "&scope=".$scope;
-            $requestUrl .= "&redirect_uri=".$redirect_uri;
+            $requestUrl .= "?client_id=".$this->GetClientID();
+            $requestUrl .= "&response_type=".self::response_type;
+            $requestUrl .= "&scope=".self::scope;
+            $requestUrl .= "&redirect_uri=".self::redirect_uri;
                 
             header("Location: ".$requestUrl);
             exit();
         }
-        
-        function GetAccessTokenFromCode($client_id, $client_secret, $redirect_uri, $code)
+
+
+        function GetAccessTokenFromAuthCode($code)
         {
-            $data = array("code" => $code, "grant_type" => "authorization_code", "redirect_uri" => $redirect_uri);
-            return GetAccessToken($client_id, $client_secret, $redirect_uri, $data);
+            $data = array("code" => $code, "grant_type" => "authorization_code", "redirect_uri" => self::redirect_uri);
+            return $this->GetAccessToken($data);
         }
         
-        function GetAccessTokenFromRefresh($client_id, $client_secret, $redirect_uri, $refresh_token)
+        function GetAccessTokenFromRefresh($refresh_token)
         {
-            $data = array("refresh_token" => $refresh_token, "grant_type" => "refresh_token", "redirect_uri" => $redirect_uri);
-            return GetAccessToken($client_id, $client_secret, $redirect_uri, $data);
+            $data = array("refresh_token" => $refresh_token, "grant_type" => "refresh_token", "redirect_uri" => self::redirect_uri);
+            return $this->GetAccessToken($data);
         }
         
-        function GetAccessToken($client_id, $client_secret, $redirect_uri, $data)
+        function GetAccessToken($data)
         {
-            $bearer_token = base64_encode($client_id.":".$client_secret);		
+            $basic_token = base64_encode($this->GetClientID().":".$this->GetClientSecret());		
             $url = "https://accounts.spotify.com/api/token";
             $options = array (
                 "http" => array(
-                    "header" => "Authorization: Basic ".$bearer_token,
+                    "header" => "Authorization: Basic ".$basic_token."\r\n".
+                                "Content-Type: application/x-www-form-urlencoded",
                     "method" => "POST",
                     "content" => http_build_query($data)
                 )
@@ -115,26 +69,54 @@
             $expiry = $currentTime + $timeTilExpire; 
             $access_token = $response->access_token;
             $refresh_token = $response->refresh_token;
-            
-            WriteFileContent($token_filename, $access_token);
-            WriteFileContent($expiry_filename, $expiry);
-            WriteFileContent($refresh_filename, $refresh_token);
-            
+                        
             return $access_token;
         }
-        
-        function WriteFileContent($filename, $content)
+
+        function GetActiveUserInfo($access_token)
         {
-            $file = fopen($filename, "w");
-            fwrite($file, $content);
-            fclose($file);
+            return $this->SendSpotifyAPIRequest("v1", "/me", $access_token, "GET", null);
         }
 
-        function DeleteTokens($token_filename, $expiry_filename, $refresh_filename)
+        function GetCurrentTrack($access_token)
         {
-            unlink($token_filename);
-            unlink($expiry_filename);
-            unlink($refresh_filename);
+            return $this->SendSpotifyAPIRequest("v1", "/me/player/currently-playing", $access_token, "GET", null);
+        }
+
+        function GetTrackById($access_token, $trackId)
+        {
+            return $this->SendSpotifyAPIRequest("v1", "/tracks/".$trackId, $access_token, "GET", null);
+        }
+
+        function AddTrackToQueue($access_token, $trackUri)
+        {
+            return $this->SendSpotifyAPIRequest("v1", "/me/player/queue?uri=".$trackUri, $access_token, "POST", null);
+        }
+
+        function SendSpotifyAPIRequest($api_version, $api_endpoint, $access_token, $method, $data)
+        {
+            
+            $url = "https://api.spotify.com/".$api_version.$api_endpoint;
+            $options = array (
+                "http" => array(
+                    "header" => "Authorization: Bearer ".$access_token."\r\n".
+                                "Content-Type: application/x-www-form-urlencoded",
+                    "method" => $method
+                )
+            );
+
+            if ($data != null)
+            {
+                array_push($options["http"], "content", http_build_query($data));
+            }
+            
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            if ($result != false) {
+                $response = json_decode($result);			
+                return $response;
+            }
+            return null;
         }
     }
 ?>

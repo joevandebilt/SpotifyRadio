@@ -2,7 +2,7 @@
 
 <main id="room" class="DynamicLoad">
 	<div class="d-grid m-3 text-center">
-		<h1>Queue A Song </h1>
+		<h1>Queue A Song</h1>
 		<h6 id="subHeader"></h6>
 		
 		<div class="m-2 row" id="helpPane">

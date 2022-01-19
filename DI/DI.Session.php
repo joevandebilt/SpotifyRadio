@@ -2,7 +2,7 @@
 
     class DISession
     {
-        function CreateSession($AccessToken, $RefreshRoken, $Expiry, $ExpiryTime, $RoomCode)
+        function CreateSession($RoomCode)
         {
             $response = new Response();
             try
@@ -10,12 +10,12 @@
                 $sessionIdInUse = $this->GetSessionBySessionID(SessionID());
                 $roomCodeInUse = $this->GetSessionByRoomCode($RoomCode);
                 
-                if ($sessionIdInUse != null)
+                if ($sessionIdInUse->GetStatusCode() == 200)
                 {
                     $response->SetStatusCode(400);
                     $response->SetMessage("Room Exists for Session - cannot create new");
                 }
-                else if ($roomCodeInUse != null)
+                else if ($roomCodeInUse->GetStatusCode() == 200)
                 {
                     $response->SetStatusCode(400);
                     $response->SetMessage("Room Code in use");
@@ -24,28 +24,83 @@
                 {
                     $DB = new MySql();
                     $Query = "INSERT INTO Sessions (SessionID, AccessToken, RefreshToken, Expiry, ExpiryTime, RoomCode) VALUES (";
-                    $Query .= "'".addslashes(SessionID())."',";
-                    $Query .= "'".addslashes($AccessToken)."',";
-                    $Query .= "'".addslashes($RefreshRoken)."',";
-                    $Query .= addslashes($Expiry).",";
-                    $Query .= addslashes($ExpiryTime).",";
+                    $Query .= "'',";
+                    $Query .= "'',";
+                    $Query .= "'',";
+                    $Query .= "0,";
+                    $Query .= "0,";
                     $Query .= "'".addslashes($RoomCode)."')";
 
                     $DB->query($Query);
-
-                    $id = -1;
-                    $model = null;
-                    if ($DB->fetchLastInsertId() > 0)
+                    if ($DB->hasErrors())
                     {
-                        $id = $DB->fetchLastInsertId();
-                        $response->SetPayload($this->GetSessionByID($id));
-                        $response->SetStatusCode(200);
+                        $response->SetStatusCode(500);
+                        $response->SetMessage($DB->showErrors());
                     }
                     else 
                     {
-                        $response->SetStatusCode(400);
-                        $response->SetMessage("Failed to Create Session");
+                        $id = $DB->fetchLastInsertId();
+                        if ($id != null && $id >= 0)
+                        {
+                            $response->SetPayload($this->GetSessionByID($id)->GetPayload());
+                            $response->SetStatusCode(200);
+                        }
+                        else 
+                        {
+                            $response->SetStatusCode(400);
+                            $response->SetMessage("Failed to Create Session");
+                        }
                     }
+                }
+            }
+            catch (Exception $e) 
+            {
+                $response->SetStatusCode(500);
+                $response->SetMessage('Caught exception: ',  $e->getMessage());
+            }
+            return $response;
+        }
+
+        function UpdateSession($AccessToken, $RefreshToken, $Expiry, $ExpiryTime, $RoomCode)
+        {
+            $response = new Response();
+            try
+            {
+                $session = $this->GetSessionBySessionID()->GetPayload();
+                if ($session != null)
+                {
+                    if ($AccessToken == null)  { $AccessToken = $session->GetAccessToken(); }
+                    if ($RefreshToken == null) { $RefreshToken = $session->GetRefreshToken(); }
+                    if ($Expiry == null)       { $Expiry = $session->GetExpiry(); }
+                    if ($ExpiryTime == null)   { $ExpiryTime = $session->GetExpiryTime(); }
+                    if ($RoomCode == null)     { $RoomCode = $session->GetRoomCode(); }
+
+                    $DB = new MySql();
+                    $Query = "UPDATE Sessions SET ";
+                    $Query .= "AccessToken = '".addslashes($AccessToken)."', ";
+                    $Query .= "RefreshToken = '".addslashes($RefreshToken)."', ";
+                    $Query .= "Expiry = ".addslashes($Expiry).", ";
+                    $Query .= "ExpiryTime = ".addslashes($ExpiryTime).", ";
+                    $Query .= "RoomCode = '".addslashes($RoomCode)."' ";
+                    $Query .= "WHERE ID = ".$session->GetID();
+
+                    $DB->query($Query);
+                    if ($DB->hasErrors())
+                    {
+                        $response->SetStatusCode(500);
+                        $response->SetMessage($DB->showErrors());
+                    }
+                    else 
+                    {
+                        $sessionObj = $this->GetSessionByID($session->ID);
+                        $response->SetPayload($sessionObj->GetPayload());
+                        $response->SetStatusCode($sessionObj->GetStatusCode());
+                    }
+                }
+                else 
+                {
+                    $response->SetStatusCode(400);
+                    $response->SetMessage("Failed to Find Existing Session");
                 }
             }
             catch (Exception $e) 
@@ -63,6 +118,12 @@
             {
                 $DB = new MySql();
                 $DB->query("DELETE FROM Sessions WHERE SessionID = '".SessionID()."'");
+
+                if ($DB->hasErrors())
+                {
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
             }
             catch (Exception $e) 
             {
@@ -80,11 +141,23 @@
                 $DB = new MySql();
                 $List = array();
                 $DB->query("SELECT * FROM Sessions");
-                $i=0;
-                while ($row = $DB->fetchObject())
+                if ($DB->hasErrors())
                 {
-                    $List[$i] = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
-                    $i++;
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
+                else 
+                {
+                    $i=0;
+                    $Status = 204;
+                    while ($row = $DB->fetchObject())
+                    {
+                        $List[$i] = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Status = 200;
+                        $i++;                        
+                    }
+                    $response->SetPayload($List);
+                    $response->SetStatusCode($Status);
                 }
             }
             catch (Exception $e) 
@@ -102,10 +175,22 @@
             {
                 $DB = new MySql();
                 $DB->query("SELECT * FROM Sessions WHERE ID =".$ID);
-                $Model = null;
-                while ($row = $DB->fetchObject())
+                if ($DB->hasErrors())
                 {
-                    $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
+                else 
+                {
+                    $Model = null;
+                    $Status = 204;
+                    while ($row = $DB->fetchObject())
+                    {
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Status = 200;
+                    }
+                    $response->SetPayload($Model);
+                    $response->SetStatusCode($Status);
                 }
             }
             catch (Exception $e) 
@@ -123,10 +208,22 @@
             {
                 $DB = new MySql();
                 $DB->query("SELECT * FROM Sessions WHERE SessionID = '".SessionID()."'");
-                $Model = null;
-                while ($row = $DB->fetchObject())
+                if ($DB->hasErrors())
                 {
-                    $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
+                else 
+                {
+                    $Model = null;
+                    $Status = 204;
+                    while ($row = $DB->fetchObject())
+                    {
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Status = 200;
+                    }
+                    $response->SetPayload($Model);
+                    $response->SetStatusCode($Status);
                 }
             }
             catch (Exception $e) 
@@ -143,11 +240,24 @@
             try 
             {
                 $DB = new MySql();
-                $DB->query("SELECT * FROM Sessions WHERE RoomCode = '".$RoomCode."'");
-                $Model = null;
-                while ($row = $DB->fetchObject())
+                $Query = "SELECT * FROM Sessions WHERE RoomCode = '".$RoomCode."'";
+                $DB->query($Query);
+                if ($DB->hasErrors())
                 {
-                    $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
+                else 
+                {
+                    $Model = null;
+                    $Status = 204;
+                    while ($row = $DB->fetchObject())
+                    {
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Status = 200;
+                    }
+                    $response->SetPayload($Model);
+                    $response->SetStatusCode($Status);
                 }
             }
             catch (Exception $e) 
