@@ -2,15 +2,15 @@
 
     class DISession
     {
-        function CreateSession($RoomCode)
+        function CreateSession($SessionID, $RoomName, $RoomCode)
         {
             $response = new Response();
             try
             {
-                $sessionIdInUse = $this->GetSessionBySessionID(SessionID());
+                $SessionIDInUse = $this->GetSessionBySessionID($SessionID);
                 $roomCodeInUse = $this->GetSessionByRoomCode($RoomCode);
                 
-                if ($sessionIdInUse->GetStatusCode() == 200)
+                if ($SessionIDInUse->GetStatusCode() == 200)
                 {
                     $response->SetStatusCode(400);
                     $response->SetMessage("Room Exists for Session - cannot create new");
@@ -23,12 +23,13 @@
                 else 
                 {
                     $DB = new MySql();
-                    $Query = "INSERT INTO Sessions (SessionID, AccessToken, RefreshToken, Expiry, ExpiryTime, RoomCode) VALUES (";
-                    $Query .= "'',";
+                    $Query = "INSERT INTO Sessions (SessionID, AccessToken, RefreshToken, Expiry, ExpiryTime, RoomName, RoomCode) VALUES (";
+                    $Query .= "'".addslashes($SessionID)."',";
                     $Query .= "'',";
                     $Query .= "'',";
                     $Query .= "0,";
                     $Query .= "0,";
+                    $Query .= "'".addslashes($RoomName)."',";
                     $Query .= "'".addslashes($RoomCode)."')";
 
                     $DB->query($Query);
@@ -61,19 +62,20 @@
             return $response;
         }
 
-        function UpdateSession($AccessToken, $RefreshToken, $Expiry, $ExpiryTime, $RoomCode)
+        function UpdateSession($SessionID, $AccessToken, $RefreshToken, $Expiry, $ExpiryTime, $RoomName, $RoomCode)
         {
             $response = new Response();
             try
             {
-                $session = $this->GetSessionBySessionID()->GetPayload();
+                $session = $this->GetSessionBySessionID($SessionID)->GetPayload();
                 if ($session != null)
                 {
-                    if ($AccessToken == null)  { $AccessToken = $session->GetAccessToken(); }
-                    if ($RefreshToken == null) { $RefreshToken = $session->GetRefreshToken(); }
-                    if ($Expiry == null)       { $Expiry = $session->GetExpiry(); }
-                    if ($ExpiryTime == null)   { $ExpiryTime = $session->GetExpiryTime(); }
-                    if ($RoomCode == null)     { $RoomCode = $session->GetRoomCode(); }
+                    if (is_null($AccessToken))  { $AccessToken = $session->GetAccessToken(); }
+                    if (is_null($RefreshToken)) { $RefreshToken = $session->GetRefreshToken(); }
+                    if (is_null($Expiry))       { $Expiry = $session->GetExpiry(); }
+                    if (is_null($ExpiryTime))   { $ExpiryTime = $session->GetExpiryTime(); }
+                    if (is_null($RoomName))     { $RoomName = $session->GetRoomName(); }
+                    if (is_null($RoomCode))     { $RoomCode = $session->GetRoomCode(); }
 
                     $DB = new MySql();
                     $Query = "UPDATE Sessions SET ";
@@ -81,10 +83,12 @@
                     $Query .= "RefreshToken = '".addslashes($RefreshToken)."', ";
                     $Query .= "Expiry = ".addslashes($Expiry).", ";
                     $Query .= "ExpiryTime = ".addslashes($ExpiryTime).", ";
+                    $Query .= "RoomName = '".addslashes($RoomName)."', ";
                     $Query .= "RoomCode = '".addslashes($RoomCode)."' ";
                     $Query .= "WHERE ID = ".$session->GetID();
 
                     $DB->query($Query);
+
                     if ($DB->hasErrors())
                     {
                         $response->SetStatusCode(500);
@@ -111,13 +115,36 @@
             return $response;
         }
 
-        function DeleteSessionBySessionID()
+        function DeleteSessionBySessionID($SessionID)
         {
             $response = new Response();
             try
             {
                 $DB = new MySql();
-                $DB->query("DELETE FROM Sessions WHERE SessionID = '".SessionID()."'");
+                $DB->query("DELETE FROM Sessions WHERE SessionID = '".$SessionID."'");
+
+                if ($DB->hasErrors())
+                {
+                    $response->SetStatusCode(500);
+                    $response->SetMessage($DB->showErrors());
+                }
+            }
+            catch (Exception $e) 
+            {
+                $response->SetStatusCode(500);
+                $response->SetMessage('Caught exception: ',  $e->getMessage());
+            }
+            return $response;
+        }
+
+        function DeleteExpiredSessions()
+        {
+            $response = new Response();
+            try
+            {
+                $time = time();
+                $DB = new MySql();
+                $DB->query("DELETE FROM Sessions WHERE ExpiryTime < ".$time." AND ExpiryTime > 0");
 
                 if ($DB->hasErrors())
                 {
@@ -152,7 +179,7 @@
                     $Status = 204;
                     while ($row = $DB->fetchObject())
                     {
-                        $List[$i] = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $List[$i] = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomName, $row->RoomCode);
                         $Status = 200;
                         $i++;                        
                     }
@@ -186,7 +213,7 @@
                     $Status = 204;
                     while ($row = $DB->fetchObject())
                     {
-                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomName, $row->RoomCode);
                         $Status = 200;
                     }
                     $response->SetPayload($Model);
@@ -201,13 +228,13 @@
             return $response;
         }
 
-        function GetSessionBySessionID()
+        function GetSessionBySessionID($SessionID)
         {
             $response = new Response();
             try 
             {
                 $DB = new MySql();
-                $DB->query("SELECT * FROM Sessions WHERE SessionID = '".SessionID()."'");
+                $DB->query("SELECT * FROM Sessions WHERE SessionID = '".$SessionID."'");
                 if ($DB->hasErrors())
                 {
                     $response->SetStatusCode(500);
@@ -219,7 +246,7 @@
                     $Status = 204;
                     while ($row = $DB->fetchObject())
                     {
-                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomName, $row->RoomCode);
                         $Status = 200;
                     }
                     $response->SetPayload($Model);
@@ -253,7 +280,7 @@
                     $Status = 204;
                     while ($row = $DB->fetchObject())
                     {
-                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomCode);
+                        $Model = new Session($row->ID, $row->SessionID, $row->AccessToken, $row->RefreshToken, $row->Expiry, $row->ExpiryTime, $row->RoomName, $row->RoomCode);
                         $Status = 200;
                     }
                     $response->SetPayload($Model);

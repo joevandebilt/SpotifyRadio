@@ -21,6 +21,16 @@ function generateRandomNumber($length) {
     return $randomString;
 }
 
+//Gets the current file name with extension
+function CurrentFileName() {
+    return trim($_SERVER['SCRIPT_NAME'], "/");
+}
+
+//Gets the current file name without extension
+function CurrentFileNameWithoutExt() {
+    return str_replace(".php", "", CurrentFileName());
+}
+
 //Redirects page to a given location
 function PageRedirect($Page) {
 		$string = '<script type="text/javascript">';

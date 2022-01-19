@@ -6,6 +6,6 @@
 
 	RewriteRule ^/?admin/?$ /admin.php	[L]
 
-	RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /room\.php\?RoomCode=([^\&\ ]+)
-	RewriteRule ^/?room\.php$ /room/%1? [L,R=301]
+	#RewriteCond %{THE_REQUEST} ^[A-Z0-9]{1,8}\ /room\.php\?RoomCode=([^\&\ ]+)
+	#RewriteRule ^/?room\.php$ /room/%1? [L,R=301]
 </IfModule>

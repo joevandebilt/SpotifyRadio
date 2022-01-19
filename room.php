@@ -19,7 +19,7 @@
 				<input type="text" class="form-control" id="trackLink" placeholder="Copy Link Here" />
 			</div>
 			<div class="col-4">
-				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="submitToQueue();">Queue</button>
+				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="RoomControls.SubmitToQueue();">Queue</button>
 			</div>
 		</div>
 

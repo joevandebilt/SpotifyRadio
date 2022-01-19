@@ -10,6 +10,7 @@ var APIHandler = (function($) {
             data: JSON.stringify({
                 "Area": area,
                 "Action": action,
+                "SessionID": localStorage.getItem('SessionID'),
                 "Payload": payload
             }),
             success: successcallback,

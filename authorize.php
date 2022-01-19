@@ -16,8 +16,8 @@
             $RefreshToken = $response->refresh_token;
 
             $DISession = new DISession();
-            $sessionResponse = $DISession->UpdateSession($AccessToken, $RefreshToken, $Expiry, $ExpiryTime, null);
-
+            $sessionResponse = $DISession->UpdateSession(SessionID(), $AccessToken, $RefreshToken, $Expiry, $ExpiryTime, null, null);
+            
             //That's us done for the authentication - now we need to close this window
             echo "<script type='text/javascript'>window.close();</script>";
         }

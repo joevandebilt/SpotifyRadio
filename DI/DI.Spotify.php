@@ -61,17 +61,6 @@
             }
             return null;	
         }
-        
-        function ProcessAccessTokenResponse($response, $token_filename, $expiry_filename, $refresh_filename)
-        {
-            $currentTime = time();
-            $timeTilExpire = $response->expires_in;
-            $expiry = $currentTime + $timeTilExpire; 
-            $access_token = $response->access_token;
-            $refresh_token = $response->refresh_token;
-                        
-            return $access_token;
-        }
 
         function GetActiveUserInfo($access_token)
         {
@@ -90,7 +79,7 @@
 
         function AddTrackToQueue($access_token, $trackUri)
         {
-            return $this->SendSpotifyAPIRequest("v1", "/me/player/queue?uri=".$trackUri, $access_token, "POST", null);
+            return $this->SendSpotifyAPIRequest("v1", "/me/player/queue?uri=".urlencode($trackUri), $access_token, "POST", null);
         }
 
         function SendSpotifyAPIRequest($api_version, $api_endpoint, $access_token, $method, $data)
@@ -100,7 +89,8 @@
             $options = array (
                 "http" => array(
                     "header" => "Authorization: Bearer ".$access_token."\r\n".
-                                "Content-Type: application/x-www-form-urlencoded",
+                                "Content-Type: application/x-www-form-urlencoded\r\n".
+                                "Content-Length: 0",
                     "method" => $method
                 )
             );

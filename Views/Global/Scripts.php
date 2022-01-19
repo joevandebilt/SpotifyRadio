@@ -6,6 +6,11 @@
 
 <script src="<?php echo GetWebsiteURL(); ?>/Scripts/api-controls.js"></script>
 <script src="<?php echo GetWebsiteURL(); ?>/Scripts/layout-controls.js"></script>
-<script src="<?php echo GetWebsiteURL(); ?>/Scripts/admin-controls.js"></script>
-<script src="<?php echo GetWebsiteURL(); ?>/Scripts/room-controls.js"></script>
+<script src="<?php echo GetWebsiteURL(); ?>/Scripts/<?php echo CurrentFileNameWithoutExt(); ?>-controls.js"></script>
+<!-- <?php echo CurrentFileNameWithoutExt() ?> -->
 
+<script type="text/javascript">
+    window.addEventListener("load", function(e) {
+        localStorage.setItem("SessionID", "<?php echo SessionID(); ?>");
+    });
+</script>

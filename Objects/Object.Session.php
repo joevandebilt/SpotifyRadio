@@ -9,10 +9,11 @@
         public $RefreshToken = null;
         public $Expiry = 0;
         public $ExpiryTime = 0;
+        public $RoomName = null;
         public $RoomCode = null;
 
         // --- CONSTRUCTOR ---
-        public function __construct ($ID = 0, $SessionID = null, $AccessToken = null, $RefreshToken = null, $Expiry = 0, $ExpiryTime = 0, $RoomCode = null)
+        public function __construct ($ID = 0, $SessionID = null, $AccessToken = null, $RefreshToken = null, $Expiry = 0, $ExpiryTime = 0, $RoomName = null, $RoomCode = null)
         {
                 $this->ID = $ID;
                 $this->SessionID = $SessionID;
@@ -20,6 +21,7 @@
                 $this->RefreshToken = $RefreshToken;
                 $this->Expiry = $Expiry;
                 $this->ExpiryTime = $ExpiryTime;
+                $this->RoomName = $RoomName;
                 $this->RoomCode = $RoomCode;
         }
 
@@ -30,6 +32,7 @@
         public function GetRefreshToken()   {return $this->RefreshToken;}
         public function GetExpiry()         {return $this->Expiry;}
         public function GetExpiryTime()     {return $this->ExpiryTime;}
+        public function GetRoomName()       {return $this->RoomName;}
         public function GetRoomCode()       {return $this->RoomCode;}
 
         // SETTERS //
@@ -39,6 +42,7 @@
         public function SetRefreshToken($val)   { $this->RefreshToken = $val;}
         public function SetExpiry($val)         { $this->Expiry = $val;}
         public function SetExpiryTime($val)     { $this->ExpiryTime = $val;}
+        public function SetRoomName($val)       { $this->RoomName = $val;}
         public function SetRoomCode($val)       { $this->RoomCode = $val;}
     }
 
