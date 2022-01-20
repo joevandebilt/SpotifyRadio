@@ -18,7 +18,7 @@
 				</li>
 			</ul>
 
-			<div class="tab-content" id="tabContent">
+			<div class="tab-content p-0 m-0" id="tabContent">
 				
 				<div class="tab-pane fade show active" role="tabpanel" aria-labelledby="dashboard-tab" id="tabDashboard">
 
@@ -27,40 +27,45 @@
 					<hr />
 
 					<div class="mt-2 row" id="roomCodeControlPane">
-						<div class="col-5">
-							<label for="RoomName" class="control-label">Room Name</label>
-							<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
+						<div class="row">	
+							<div class="col-6">
+								<label for="RoomName" class="control-label">Room Name</label>
+							</div>
+							<div class="col-3">
+								<label for="RoomCode" class="control-label">Room Code</label>
+							</div>
+							<div class="col-3">
+								<!-- This a placeholder to keep the columns in line -->
+							</div>
 						</div>
-						<div class="col-4">
-							<label for="RoomCode" class="control-label">Room Code</label>
-							<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
-						</div>
-						<div class="col-3">
-							<button type="button" class="btn btn-primary action-save" onclick="AdminControls.SaveRoomInfo()">
-								<i class="fas fa-save"></i> Save Room
-							</button>
+						<div class="row">
+							<div class="col-6">
+								<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
+							</div>
+							<div class="col-3">
+								<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
+							</div>
+							<div class="col-3">
+								<button type="button" class="btn btn-primary action-save" onclick="AdminControls.SaveRoomInfo()">
+									<i class="fas fa-save"></i> Save Room
+								</button>
+							</div>
 						</div>
 					</div>
 
 					<hr />
 
-					<div class="mt-2 row" id="controlsPane">
-						<div class="col-3">
+					<div class="mt-2 row d-flex align-items-stretch" id="controlsPane">
+						<div class="col-12 btn-group">
 							<button type="button" class="btn btn-success action-connect" onclick="AdminControls.AuthWithSpotify()">
 								<i class="fab fa-spotify"></i> Connect to Spotify
 							</button>
-						</div>
-						<div class="col-3">
 							<button type="button" class="btn btn-secondary action-extend" onclick="AdminControls.ExtendExpiry()">
 								<i class="fas fa-clock"></i> Extend Expiry
 							</button>
-						</div>
-						<div class="col-3">
 							<button type="button" class="btn btn-warning action-disconnect" onclick="AdminControls.DisconnectFromSpotify()">
 								<i class="fas fa-plug"></i> Disconnect from Spotify
 							</button>
-						</div>
-						<div class="col-3">
 							<a href="/logout.php" class="btn btn-danger action-destroy">
 								<i class="fas fa-bomb"></i> Clear all Data
 							</a>
@@ -70,12 +75,12 @@
 			
 				<div class="tab-pane fade" role="tabpanel" aria-labelledby="share-tab" id="tabShare">
 					<div class="m-1 p-0 row">
-						<div class="col-12">
+						<div class="col-12 p-0">
 							<img src="#" alt=QRCode id="qrCodeImage" class="img-fluid" />
 						</div>
 					</div>
 					<div class="m-1 p-0 row">
-						<div class="col-12">
+						<div class="col-12 p-0">
 							<a href="#" id="roomLink" class="btn btn-link">https://spotify.nkode.uk/room/123456</a>
 							<button class="btn btn-secondary"><i class="fas fa-copy"></i> Copy</button>
 						</div>

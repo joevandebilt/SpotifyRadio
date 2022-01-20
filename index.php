@@ -8,20 +8,21 @@
 		<div class="m-2 row" id="infoPane">
 			<div class="col-12">
 				<p>Just a nice way of letting everybody queue songs on your spotify device</p>
+				<small class="text-small">Spotify Premium is required to create a room, it is <b>not required</b> to join a room</small>
 			</div>
 		</div>
 
 
 		<div class="m-2" id="controlPane">
-			<div class="row">
+			<div class="pt-2 row">
 				<div class="col-12">
-					<input type="text" class="form-control" id="RoomCode" placeholder="Room Code" />
+					<input type="text" class="form-control" id="RoomCode" placeholder="Room Code" maxlength="8" />
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="pt-2 row">
 				<div class="col-6">
-					<button type="button" class="btn btn-primary" onclick="RoomControls.NavigateToRoom()">Enter Room</button>
+					<button type="button" class="btn btn-primary" onclick="NavigateToRoom()">Enter Room</button>
 				</div>
 				<div class="col-6">
 					<a href="/admin" class="btn btn-secondary">Create Room</a>
@@ -30,3 +31,12 @@
 		</div>
 	</div>
 </main>
+
+<script type="text/javascript">
+	function NavigateToRoom() {
+        var roomCode = $("#RoomCode").val();
+		if (roomCode != "") {
+			window.location = "https://spotify.nkode.uk/room/"+roomCode;
+        }
+	}
+</script>

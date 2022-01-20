@@ -9,11 +9,14 @@
   <title>Spotify Radio</title>  
 </head>
 <body>
-    
-<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Header.php'); ?>
-
+<div class="container mt-2 row">
+  <div class="col-1 m-0 p-0">
+    <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Header.php'); ?>
+  </div>
+  <div class="col-11 m-0 p-0">
     <main id="RenderBody"></main>
-
-    <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Footer.php'); ?>
+  </div>
+  <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Footer.php'); ?>
+</div>
 </body>
 </html>

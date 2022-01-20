@@ -135,12 +135,6 @@ var RoomControls = (function($) {
         },
         VerifyTrackId: function(trackId) {
             return verifyTrackId(trackId)
-        },
-        NavigateToRoom: function() {
-            var roomCode = $("#RoomCode").val();
-            if (roomCode != "") {
-                window.location = "https://spotify.nkode.uk/room/"+roomCode;
-            }
         }
     }
 
