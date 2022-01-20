@@ -64,7 +64,7 @@
 		}
 		else if ($action == "DisconnectSession")
 		{
-			$response = $DISession->UpdateSession($sessionID, "", "", 0, 0, null, null);
+			$response = $DISession->UpdateSession($sessionID, "", "", 3600, time()+3600, null, null);
 		}
 	}
 	else if ($area == "Room")

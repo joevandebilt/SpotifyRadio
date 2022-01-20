@@ -27,8 +27,8 @@
                     $Query .= "'".addslashes($SessionID)."',";
                     $Query .= "'',";
                     $Query .= "'',";
-                    $Query .= "0,";
-                    $Query .= "0,";
+                    $Query .= "7200,";
+                    $Query .= time()+7200.",";  //Give new users 2 hours to connect spotify
                     $Query .= "'".addslashes($RoomName)."',";
                     $Query .= "'".addslashes($RoomCode)."')";
 
