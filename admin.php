@@ -24,11 +24,15 @@
 
 					<div class="mt-2" id="connectionPane"></div>
 
+					<hr />
+
 					<div class="mt-2 row" id="roomCodeControlPane">
-						<div class="col-6">
+						<div class="col-5">
+							<label for="RoomName" class="control-label">Room Name</label>
 							<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
 						</div>
-						<div class="col-3">
+						<div class="col-4">
+							<label for="RoomCode" class="control-label">Room Code</label>
 							<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
 						</div>
 						<div class="col-3">
@@ -37,6 +41,8 @@
 							</button>
 						</div>
 					</div>
+
+					<hr />
 
 					<div class="mt-2 row" id="controlsPane">
 						<div class="col-3">
@@ -63,12 +69,12 @@
 				</div>
 			
 				<div class="tab-pane fade" role="tabpanel" aria-labelledby="share-tab" id="tabShare">
-					<div class="m-2 row">
+					<div class="m-1 p-0 row">
 						<div class="col-12">
-							<img src="#" alt=QRCode id="qrCodeImage" />
+							<img src="#" alt=QRCode id="qrCodeImage" class="img-fluid" />
 						</div>
 					</div>
-					<div class="m-2 row">
+					<div class="m-1 p-0 row">
 						<div class="col-12">
 							<a href="#" id="roomLink" class="btn btn-link">https://spotify.nkode.uk/room/123456</a>
 							<button class="btn btn-secondary"><i class="fas fa-copy"></i> Copy</button>

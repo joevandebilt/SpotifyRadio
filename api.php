@@ -13,7 +13,6 @@
 	$DISpotify = new DISpotify();
 
 	$response = new Response(400, null, "Failed to Complete Operation: ".$area."/".$action);
-	$DIResponse = null;
 
 	//Clean up expired sessions
 	$DISession->DeleteExpiredSessions();
@@ -77,35 +76,40 @@
 
 		if ($action == "RoomReady")
 		{
-			$DIResponse = null;
 			if ($RoomSession != null && strlen($RoomSession->GetAccessToken()) > 0)
 			{
-				$DIResponse = $RoomSession->GetRoomName();
+				$response->SetMessage(null);
+				$roomName = $RoomSession->GetRoomName();
+				if ($roomName != null)
+				{
+					$response->SetPayload($roomName);
+					$response->SetStatusCode(200);
+				}
+				else 
+				{
+					$response->SetPayload(null);
+					$response->SetStatusCode(204);
+				}
 			}
 		}
 		else if ($action == "GetUserInfo")
 		{
-			$DIResponse = $DISpotify->GetActiveUserInfo($RoomSession->GetAccessToken());
+			$response = $DISpotify->GetActiveUserInfo($RoomSession->GetAccessToken());
 		}
 		else if ($action == "GetCurrentTrack")
 		{
-			$DIResponse = $DISpotify->GetCurrentTrack($RoomSession->GetAccessToken());
+			$response = $DISpotify->GetCurrentTrack($RoomSession->GetAccessToken());
 		}
 		else if ($action == "GetTrackInfo")
 		{
 			$track_uri = $payload["TrackUri"];
-			$DIResponse = $DISpotify->GetTrackById($RoomSession->GetAccessToken(), $track_uri);
+			$response = $DISpotify->GetTrackById($RoomSession->GetAccessToken(), $track_uri);
 		}
 		else if ($action == "QueueTrack")
 		{
 			$track_uri = $payload["TrackUri"];
-			$DIResponse = $DISpotify->AddTrackToQueue($RoomSession->GetAccessToken(), $track_uri);
+			$response = $DISpotify->AddTrackToQueue($RoomSession->GetAccessToken(), $track_uri);
 		}
-	}
-
-	if ($DIResponse != null)
-	{
-		$response = new Response(200, $DIResponse, null);
 	}
 
 	echo json_encode($response);

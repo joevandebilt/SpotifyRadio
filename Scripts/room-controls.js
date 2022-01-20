@@ -4,13 +4,12 @@ var RoomControls = (function($) {
 
         //Get the room code from a hidden token or url parameter?
         APIRequest("RoomReady", null, (roomResponse) =>{ 
-
             if (roomResponse.StatusCode != 200) {
                 $(".add-to-queue").attr("disabled","disabled");
                 $(".add-to-queue").addClass("disabled");
                 $(".add-to-queue").html("Room not Connected to Spotify");
                 $("#nowPlayingPane").hide();
-                apiError();
+                apiError(roomResponse);
             }
             else {
                 APIRequest("GetUserInfo", null, (response) => {
@@ -23,8 +22,6 @@ var RoomControls = (function($) {
 
     function getCurrentTrack() {
         APIRequest("GetCurrentTrack", null, (response) => {
-            console.log(response);
-
             if (response.StatusCode == 200) {
                 var meta = response.Payload;
                 var track = meta.item;
@@ -62,20 +59,17 @@ var RoomControls = (function($) {
             }
             else 
             {
-                apiError();
+                apiError("Submit to Queue - Track URI Could not be determined");
             }
         }
         else 
         {
-            apiError();
+            apiError("Submit to Queue - Track Link is Empty");
         }
     }
 
     function verifyTrackId(trackId) {
-        var data = {};
-        data.TrackUri = trackId;
-
-        APIRequest("GetTrackInfo", data, processTrackInfoResponse);
+        APIRequest("GetTrackInfo", { TrackUri: trackId }, processTrackInfoResponse);
     }
 
     function processTrackInfoResponse(response) {
@@ -91,26 +85,23 @@ var RoomControls = (function($) {
                 var image = track.album.images[0].url;
                 $("#queuedImage").attr("src", image);
 
-                $("#resultPane").show();
-
-                $("#queuePane").hide();
-                $("#helpPane").hide();
-                $("#nowPlayingPane").hide();
-
-                console.log(track);
-                var data = {
-                    TrackUri: track.uri
-                };
-                APIRequest("QueueTrack", data, (response) => console.log(response));
+                APIRequest("QueueTrack", { TrackUri: track.uri }, (response) => {
+                    if (response.StatusCode == 204) {
+                        var myToastEl = document.getElementById('resultToast')
+                        var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
+                        myToast.show();
+                    } else {
+                        apiError(response);
+                    }
+                });
             }
             else {
-                apiError();
+                apiError("Process Track Info Response - Payload is null");
             }
         }
         else {
             apiError(response);
         }
-
     }
 
     function apiError(xhr, ajaxOptions, thrownError) {

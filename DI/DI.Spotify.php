@@ -91,10 +91,10 @@
                     "header" => "Authorization: Bearer ".$access_token."\r\n".
                                 "Content-Type: application/x-www-form-urlencoded\r\n".
                                 "Content-Length: 0",
-                    "method" => $method
+                    "method" => $method,
+                    "ignore_errors" => true
                 )
             );
-
             if ($data != null)
             {
                 array_push($options["http"], "content", http_build_query($data));
@@ -102,11 +102,17 @@
             
             $context = stream_context_create($options);
             $result = file_get_contents($url, false, $context);
+
+            //This value comes out of nowehere when the above ^ statement is complete
+            $status_line = $http_response_header[0];
+            preg_match('{HTTP\/\S*\s(\d{3})}', $status_line, $match);
+            $status = $match[1];
+
+            $response = new Response($status);
             if ($result != false) {
-                $response = json_decode($result);			
-                return $response;
+                $response->SetPayload(json_decode($result));
             }
-            return null;
+            return $response;
         }
     }
 ?>
