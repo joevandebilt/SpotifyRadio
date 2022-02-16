@@ -1,23 +1,25 @@
 var RoomControls = (function($) {
 
     $(document).ready(function() {
-
-        //Get the room code from a hidden token or url parameter?
-        APIRequest("RoomReady", null, (roomResponse) =>{ 
-            if (roomResponse.StatusCode != 200) {
-                $(".add-to-queue").attr("disabled","disabled");
-                $(".add-to-queue").addClass("disabled");
-                $(".add-to-queue").html("Room not Connected to Spotify");
-                $("#nowPlayingPane").hide();
-                apiError(roomResponse);
-            }
-            else {
-                APIRequest("GetUserInfo", null, (response) => {
-                    $("#subHeader").html("Connected to "+roomResponse.Payload);
-                    getCurrentTrack();
-                });
-            }
-        });
+        if ($("#room").length > 0) 
+        {
+            //Get the room code from a hidden token or url parameter?
+            APIRequest("RoomReady", null, (roomResponse) =>{ 
+                if (roomResponse.StatusCode != 200) {
+                    $(".add-to-queue").attr("disabled","disabled");
+                    $(".add-to-queue").addClass("disabled");
+                    $(".add-to-queue").html("Room not Connected to Spotify");
+                    $("#nowPlayingPane").hide();
+                    apiError(roomResponse);
+                }
+                else {
+                    APIRequest("GetUserInfo", null, (response) => {
+                        $("#subHeader").html("Connected to "+roomResponse.Payload);
+                        getCurrentTrack();
+                    });
+                }
+            });
+        }
     });
 
     function getCurrentTrack() {
@@ -28,7 +30,7 @@ var RoomControls = (function($) {
                 
                 $("#nowPlayingImage").attr("src", track.album.images[0].url);
 
-                var link ="<a href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
+                var link ="<a class='btn btn-lg btn-link text-primary ps-0 ms-0' href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
                 $("#nowPlayingTrack").html(link);
 
                 var artists = track.artists.map(function(a) { return a.name}).join(", ");

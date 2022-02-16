@@ -5,70 +5,23 @@
 		<h1>Queue A Song</h1>
 		<h6 id="subHeader"></h6>
 		
-		<div class="m-2 row" id="helpPane">
+		<div class="m-3 text-center" id="helpPane">
 			<p>Enter a spotify song link to queue a track, to get a song link select track, share and Copy Link</p>
-
-			<div class="col-12">
-				<img src="/Images/ShareLink.PNG" class="img-fluid" />
-			</div>
+			<img src="/Images/ShareLink.PNG" class="img-fluid" />
 		</div>
 
-
-		<div class="m-2 row" id="queuePane">      
-			<div class="col-8">
+		<div class="m-3 row" id="queuePane">      
+			<div class="col-sm-8 mt-2">
 				<input type="text" class="form-control" id="trackLink" placeholder="Copy Link Here" />
 			</div>
-			<div class="col-4">
+			<div class="col-sm-4 mt-2">
 				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="RoomControls.SubmitToQueue();">Queue</button>
 			</div>
 		</div>
 
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Now-Playing.php') ?>
 
-		<div class="mt-4 ml-2 mr-2 row" id="nowPlayingPane">    
-			<div class="accordion" id="accordionExample">
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="headingOne">
-					<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-						Currently Playing
-					</button>
-					</h2>
-					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-						<div class="accordion-body">						
-							<div class="row">
-								<div class="col-3 p-0">
-									<img class="img-fluid img-thumbnail" id="nowPlayingImage" alt="Now playing artwork" />
-								</div>			
-								<div class="col-9 text-start">
-									<h5 id="nowPlayingTrack"></h5>
-									<p id="nowPlayingArtist"></p>
-									<strong id="nowPlayingTimestamp"></strong>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>			
-		</div>
-
-
-		<div class="toast-container position-absolute p-3 top-0 end-0">
-			<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="resultToast">
-				<div class="toast-header">
-					<strong class="me-auto"><i class="fab fa-spotify"></i> Song Queued</strong>
-					<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-				</div>
-				<div class="toast-body">
-					<div class="card">
-						<img src="#" id="queuedImage" class="card-img-top img-fluid" alt="album-art" />
-						<div class="card-body">
-							<h5 id="queuedTrack" class="card-title"></h5>
-							<p class="text-muted">by</p>
-							<p id="queuedArtist" class="card-text"></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Song-Toast.php') ?>
 
 	</div>
 

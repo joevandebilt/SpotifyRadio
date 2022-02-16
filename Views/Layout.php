@@ -8,12 +8,10 @@
 
   <title>Spotify Radio</title>  
 </head>
-<body>
-<div class="container mt-2 row">
-  <div class="col-1 m-0 p-0">
-    <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Header.php'); ?>
-  </div>
-  <div class="col-11 m-0 p-0">
+<body class="bg-dark text-primary">
+<div class="container mt-2">
+  <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Header.php'); ?>
+  <div class="mt-3 p-0">
     <main id="RenderBody"></main>
   </div>
   <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Footer.php'); ?>

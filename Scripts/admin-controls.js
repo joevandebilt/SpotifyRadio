@@ -1,9 +1,10 @@
 var AdminControls = (function($) {
 
     $(document).ready(function() { 
-
-        debugOutput("Loading...");
-        APIHandler.Send("Admin", "GetRoomInfo", null, InitDashboard, apiError);
+        if ($("#authorize").length > 0) {
+            debugOutput("Loading...");
+            APIHandler.Send("Admin", "GetRoomInfo", null, InitDashboard, apiError);
+        }
     });
 
     function InitDashboard(response)

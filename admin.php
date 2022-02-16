@@ -27,29 +27,18 @@
 					<hr />
 
 					<div class="mt-2 row" id="roomCodeControlPane">
-						<div class="row">	
-							<div class="col-6">
-								<label for="RoomName" class="control-label">Room Name</label>
-							</div>
-							<div class="col-3">
-								<label for="RoomCode" class="control-label">Room Code</label>
-							</div>
-							<div class="col-3">
-								<!-- This a placeholder to keep the columns in line -->
-							</div>
+						<div class="col-sm-4 input-group input-lg">		
+							<label for="RoomName" class="control-label">Room Name</label>					
+							<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
 						</div>
-						<div class="row">
-							<div class="col-6">
-								<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
-							</div>
-							<div class="col-3">
-								<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
-							</div>
-							<div class="col-3">
-								<button type="button" class="btn btn-primary action-save" onclick="AdminControls.SaveRoomInfo()">
-									<i class="fas fa-save"></i> Save Room
-								</button>
-							</div>
+						<div class="col-sm-4 input-group input-lg">							
+							<label for="RoomCode" class="control-label">Room Code</label>
+							<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
+						</div>
+						<div class="col-sm-4 input-group input-lg">							
+							<button type="button" class="btn btn-lg btn-primary action-save" onclick="AdminControls.SaveRoomInfo()">
+								<i class="fas fa-save"></i> Save Room
+							</button>
 						</div>
 					</div>
 
@@ -57,16 +46,16 @@
 
 					<div class="mt-2 row d-flex align-items-stretch" id="controlsPane">
 						<div class="col-12 btn-group">
-							<button type="button" class="btn btn-success action-connect" onclick="AdminControls.AuthWithSpotify()">
+							<button type="button" class="btn btn-lg btn-success action-connect" onclick="AdminControls.AuthWithSpotify()">
 								<i class="fab fa-spotify"></i> Connect to Spotify
 							</button>
-							<button type="button" class="btn btn-secondary action-extend" onclick="AdminControls.ExtendExpiry()">
+							<button type="button" class="btn btn-lg btn-secondary action-extend" onclick="AdminControls.ExtendExpiry()">
 								<i class="fas fa-clock"></i> Extend Expiry
 							</button>
-							<button type="button" class="btn btn-warning action-disconnect" onclick="AdminControls.DisconnectFromSpotify()">
+							<button type="button" class="btn btn-lg btn-warning action-disconnect" onclick="AdminControls.DisconnectFromSpotify()">
 								<i class="fas fa-plug"></i> Disconnect from Spotify
 							</button>
-							<a href="/logout.php" class="btn btn-danger action-destroy">
+							<a href="/logout.php" class="btn btn-lg btn-danger action-destroy">
 								<i class="fas fa-bomb"></i> Clear all Data
 							</a>
 						</div>

@@ -5,6 +5,8 @@
 	RewriteRule ^/?room/(.*?)/?$ /room.php?RoomCode=$1 [L]
 
 	RewriteRule ^/?admin/?$ /admin.php	[L]
+	RewriteRule ^/?privacy/?$ /privacy.php	[L]
+	RewriteRule ^/?faq/?$ /faq.php	[L]
 
 	#RewriteCond %{THE_REQUEST} ^[A-Z0-9]{1,8}\ /room\.php\?RoomCode=([^\&\ ]+)
 	#RewriteRule ^/?room\.php$ /room/%1? [L,R=301]
