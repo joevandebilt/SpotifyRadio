@@ -9,8 +9,8 @@
 			<p>The information which is stored is as follows</p>
 			<ul>
 				<li>A randomly generated ID</li>
-				<li>Your spotify Auth Token</li>
-				<li>Your spotify Refresh Token (used to keep your session alive)</li>
+				<li>Your Spotify Auth Token</li>
+				<li>Your Spotify Refresh Token (used to keep your session alive)</li>
 				<li>Your Room name and Room Code</li>
 			</ul>
 			<p>I did this project for a bit of fun - I will not be storing any of your personal data, song choices or device information.</p>

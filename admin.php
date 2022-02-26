@@ -1,83 +1,33 @@
 <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Layout.php'); ?>
 
 <main id="authorize" class="DynamicLoad">
-	<div class="d-grid m-3 text-center">	
-		<h1>Admin Control Panel</h1>
-		<h6 id="subHeader">This is where the fun begins...</h6>
+	<div class="d-grid my-3 text-center">	
 
 		<div class="m-2 row" id="tabsPane">
 			<ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
 				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#tabDashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="true">Dashboard</button>
+					<button class="nav-link active text-primary" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#tabDashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="true">Dashboard</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="share-tab" data-bs-toggle="tab" data-bs-target="#tabShare" type="button" role="tab" aria-controls="share" aria-selected="false">Share</button>
+					<button class="nav-link text-primary" id="share-tab" data-bs-toggle="tab" data-bs-target="#tabShare" type="button" role="tab" aria-controls="share" aria-selected="false">Share</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="debug-tab" data-bs-toggle="tab" data-bs-target="#tabDebug" type="button" role="tab" aria-controls="debug" aria-selected="false">Debug</button>
+					<button class="nav-link text-primary" id="debug-tab" data-bs-toggle="tab" data-bs-target="#tabDebug" type="button" role="tab" aria-controls="debug" aria-selected="false">Debug</button>
 				</li>
 			</ul>
 
 			<div class="tab-content p-0 m-0" id="tabContent">
-				
-				<div class="tab-pane fade show active" role="tabpanel" aria-labelledby="dashboard-tab" id="tabDashboard">
 
-					<div class="mt-2" id="connectionPane"></div>
-
-					<hr />
-
-					<div class="mt-2 row" id="roomCodeControlPane">
-						<div class="col-sm-4 input-group input-lg">		
-							<label for="RoomName" class="control-label">Room Name</label>					
-							<input type="text" id="RoomName" name="RoomName" placeholder="Room Name" class="form-control" value="Room-123456" maxlength="20"/>
-						</div>
-						<div class="col-sm-4 input-group input-lg">							
-							<label for="RoomCode" class="control-label">Room Code</label>
-							<input type="text" id="RoomCode" name="RoomCode" placeholder="Room Code" class="form-control" value="123456" maxlength="8"/>
-						</div>
-						<div class="col-sm-4 input-group input-lg">							
-							<button type="button" class="btn btn-lg btn-primary action-save" onclick="AdminControls.SaveRoomInfo()">
-								<i class="fas fa-save"></i> Save Room
-							</button>
-						</div>
-					</div>
-
-					<hr />
-
-					<div class="mt-2 row d-flex align-items-stretch" id="controlsPane">
-						<div class="col-12 btn-group">
-							<button type="button" class="btn btn-lg btn-success action-connect" onclick="AdminControls.AuthWithSpotify()">
-								<i class="fab fa-spotify"></i> Connect to Spotify
-							</button>
-							<button type="button" class="btn btn-lg btn-secondary action-extend" onclick="AdminControls.ExtendExpiry()">
-								<i class="fas fa-clock"></i> Extend Expiry
-							</button>
-							<button type="button" class="btn btn-lg btn-warning action-disconnect" onclick="AdminControls.DisconnectFromSpotify()">
-								<i class="fas fa-plug"></i> Disconnect from Spotify
-							</button>
-							<a href="/logout.php" class="btn btn-lg btn-danger action-destroy">
-								<i class="fas fa-bomb"></i> Clear all Data
-							</a>
-						</div>
-					</div>
+				<div class="tab-pane fade show active mt-3" role="tabpanel" aria-labelledby="dashboard-tab" id="tabDashboard">
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Connection-Panel.php'); ?>					
 				</div>
 			
-				<div class="tab-pane fade" role="tabpanel" aria-labelledby="share-tab" id="tabShare">
-					<div class="m-1 p-0 row">
-						<div class="col-12 p-0">
-							<img src="#" alt=QRCode id="qrCodeImage" class="img-fluid" />
-						</div>
-					</div>
-					<div class="m-1 p-0 row">
-						<div class="col-12 p-0">
-							<a href="#" id="roomLink" class="btn btn-link">https://spotify.nkode.uk/room/123456</a>
-							<button class="btn btn-secondary"><i class="fas fa-copy"></i> Copy</button>
-						</div>
-					</div>
+				<div class="tab-pane fade mt-3" role="tabpanel" aria-labelledby="share-tab" id="tabShare">
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.php'); ?>
 				</div>
 
-				<div class="tab-pane fade" role="tabpanel" aria-labelledby="debug-tab" id="tabDebug">
-					<textarea class="form-control disabled" rows="20" disabled="disabled" id="informationWindow"></textarea>
+				<div class="tab-pane fade mt-3" role="tabpanel" aria-labelledby="debug-tab" id="tabDebug">
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Debug-Panel.php'); ?>
 				</div>
 
 			</div>

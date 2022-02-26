@@ -12,5 +12,10 @@
 <script type="text/javascript">
     window.addEventListener("load", function(e) {
         localStorage.setItem("SessionID", "<?php echo SessionID(); ?>");
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
     });
 </script>

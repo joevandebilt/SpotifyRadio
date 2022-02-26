@@ -1,5 +1,5 @@
-<div class="toast-container position-absolute p-3 top-0 end-0 bg-dark text-primary">
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="resultToast">
+<div class="toast-container position-absolute top-0 end-0 p-3" id="toastPlacement" aria-live="polite" aria-atomic="true">
+    <div class="toast hide" id="resultToast">
         <div class="toast-header">
             <strong class="me-auto"><i class="fab fa-spotify"></i> Song Queued</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>

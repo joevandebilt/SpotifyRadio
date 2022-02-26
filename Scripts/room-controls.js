@@ -4,7 +4,7 @@ var RoomControls = (function($) {
         if ($("#room").length > 0) 
         {
             //Get the room code from a hidden token or url parameter?
-            APIRequest("RoomReady", null, (roomResponse) =>{ 
+            APIRequest("RoomReady", null, (roomResponse) =>{  
                 if (roomResponse.StatusCode != 200) {
                     $(".add-to-queue").attr("disabled","disabled");
                     $(".add-to-queue").addClass("disabled");
@@ -61,11 +61,13 @@ var RoomControls = (function($) {
             }
             else 
             {
+                $("#trackLink").addClass("is-invalid");
                 apiError("Submit to Queue - Track URI Could not be determined");
             }
         }
         else 
         {
+            $("#trackLink").addClass("is-invalid");
             apiError("Submit to Queue - Track Link is Empty");
         }
     }
@@ -77,6 +79,7 @@ var RoomControls = (function($) {
     function processTrackInfoResponse(response) {
         if (response.StatusCode == 200)
         {
+            $("#trackLink").removeClass("is-invalid");
             track = response.Payload;
             if (track != null) {
                 $("#queuedTrack").html(track.name)
@@ -103,6 +106,7 @@ var RoomControls = (function($) {
         }
         else {
             apiError(response);
+            $("#trackLink").addClass("is-invalid");
         }
     }
 

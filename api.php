@@ -54,7 +54,7 @@
 				}
 				else 
 				{
-					$response->SetMessage("Failed to refresh spotify token");
+					$response->SetMessage("Failed to refresh Spotify token");
 				}
 			}
 			else 

@@ -14,7 +14,7 @@
 				<div class="col-sm-6">
 					<div class="card text-white bg-secondary">
 						<div class="card-body">
-							<h5 class="card-title">Join a Room</h5>
+							<h5 class="card-title mb-4">Join a Room</h5>
 							<div class="input-group input-lg">
 								<input type="text" class="form-control" id="RoomCode" placeholder="Room Code" maxlength="8" />
 								<button type="button" class="btn btn-lg btn-primary" onclick="NavigateToRoom()">Enter Room</button>
@@ -26,7 +26,7 @@
 				<div class="col-sm-6">
 					<div class="card text-white bg-secondary">
 						<div class="card-body">
-							<h5>Or create your own</h5>
+							<h5 class="mb-4">Or create your own</h5>
 							<a href="/admin" class="btn btn-lg btn-dark">Create Room</a>
 						</div>
 					</div>
