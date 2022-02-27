@@ -16,7 +16,10 @@
 				<div class="invalid-feedback">Invalid Spotify Track link</div>
 			</div>
 			<div class="col-sm-4 mt-2">
-				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="RoomControls.SubmitToQueue();" >Queue</button>
+				<div class="button-group d-flex flex-row">
+					<button type="button" class="btn btn-primary flex-grow-1 add-to-queue" onclick="RoomControls.SubmitToQueue();" >Queue</button>
+					<button type="button" class="btn btn-secondary flex-shrink-1 refresh-room hidden" onclick="RoomControls.Init();"><i class="fa-solid fa-arrows-rotate"></i></button>
+				</div>
 			</div>
 		</div>
 

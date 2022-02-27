@@ -3,24 +3,25 @@ var RoomControls = (function($) {
     $(document).ready(function() {
         if ($("#room").length > 0) 
         {
-            //Get the room code from a hidden token or url parameter?
-            APIRequest("RoomReady", null, (roomResponse) =>{  
-                if (roomResponse.StatusCode != 200) {
-                    $(".add-to-queue").attr("disabled","disabled");
-                    $(".add-to-queue").addClass("disabled");
-                    $(".add-to-queue").html("Room not Connected to Spotify");
-                    $("#nowPlayingPane").hide();
-                    apiError(roomResponse);
-                }
-                else {
-                    APIRequest("GetUserInfo", null, (response) => {
-                        $("#subHeader").html("Connected to "+roomResponse.Payload);
-                        getCurrentTrack();
-                    });
-                }
-            });
+            initRoom();
         }
     });
+
+    function initRoom() {
+        //Get the room code from a hidden token or url parameter?
+        $(".refresh-room").addClass("hidden");
+        APIRequest("RoomReady", null, (roomResponse) =>{  
+            if (roomResponse.StatusCode != 200) {
+                disableQueueButton("Room not Connected to Spotify");
+                apiError(roomResponse);
+            }
+            else 
+            {
+                $("#subHeader").html("Connected to "+roomResponse.Payload);
+                getCurrentTrack();
+            }
+        });
+    }
 
     function getCurrentTrack() {
         APIRequest("GetCurrentTrack", null, (response) => {
@@ -43,7 +44,11 @@ var RoomControls = (function($) {
 
                 var triggerAgain = track.duration_ms - meta.progress_ms + 1000;
                 setTimeout(getCurrentTrack, triggerAgain);
-            } else {
+            } 
+            else if (response.StatusCode == 204) {
+                disableQueueButton("No active player found");
+            }
+            else {
                 $("#nowPlayingPane").hide();
             }
         });
@@ -110,6 +115,21 @@ var RoomControls = (function($) {
         }
     }
 
+    function enableQueueButton() {
+        $(".add-to-queue").removeAttr("disabled")
+        $(".add-to-queue").removeClass("disabled");
+        $(".add-to-queue").html("Queue");
+        $("#nowPlayingPane").show();
+    }
+
+    function disableQueueButton(message) {
+        $(".add-to-queue").attr("disabled","disabled");
+        $(".add-to-queue").addClass("disabled");
+        $(".add-to-queue").html(message);
+        $("#nowPlayingPane").hide();
+        $(".refresh-room").removeClass("hidden");
+    }
+
     function apiError(xhr, ajaxOptions, thrownError) {
         console.log(xhr);
         console.log(ajaxOptions);
@@ -141,6 +161,9 @@ var RoomControls = (function($) {
         },
         VerifyTrackId: function(trackId) {
             return verifyTrackId(trackId)
+        },
+        Init: function() {
+            initRoom();
         }
     }
 

@@ -13,7 +13,7 @@
           <a class="nav-link text-primary" href="/">Home</a>
         </li>
         <li class="nav-item <?php if (CurrentFileName() == "admin.php") { echo "active";} ?>">
-          <a class="nav-link text-primary" href="/admin">New Room</a>
+          <a class="nav-link text-primary" href="/admin">Room Admin</a>
         </li>
         <li class="nav-item <?php if (CurrentFileName() == "faq.php") { echo "active";} ?>">
           <a class="nav-link text-primary" href="/faq">FAQ</a>
