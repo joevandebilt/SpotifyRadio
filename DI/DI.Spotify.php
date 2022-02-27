@@ -7,12 +7,12 @@
 
         function GetClientID()
         {
-            return "046f25af5f1444a881c64cec8ec3f716";
+            return Secrets::$SPOTIFY_CLIENT;
         }
 
         function GetClientSecret()
         {
-            return file_get_contents($_SERVER['DOCUMENT_ROOT']."/client_secret", true);
+            return Secrets::$SPOTIFY_SECRET;
         }
 
         function RedirectToAuthScreen()

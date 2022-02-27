@@ -16,7 +16,7 @@
 				<div class="invalid-feedback">Invalid Spotify Track link</div>
 			</div>
 			<div class="col-sm-4 mt-2">
-				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="RoomControls.SubmitToQueue();">Queue</button>
+				<button type="button" class="btn btn-primary form-control add-to-queue" onclick="RoomControls.SubmitToQueue();" >Queue</button>
 			</div>
 		</div>
 
