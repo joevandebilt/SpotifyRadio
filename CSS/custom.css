@@ -1,3 +1,7 @@
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+.img-search-result {
+    max-height: 150px;
 }

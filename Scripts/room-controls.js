@@ -81,6 +81,12 @@ var RoomControls = (function($) {
         APIRequest("GetTrackInfo", { TrackUri: trackId }, processTrackInfoResponse);
     }
 
+    function searchSong() {
+        var searchText = $("#trackSeach").val();
+        $("#track-search-results").empty();
+        APIRequest("Search", { SearchText: searchText }, processTrackSearchResponse);
+    }
+
     function processTrackInfoResponse(response) {
         if (response.StatusCode == 200)
         {
@@ -100,6 +106,8 @@ var RoomControls = (function($) {
                         var myToastEl = document.getElementById('resultToast')
                         var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
                         myToast.show();
+
+                        $("#trackLink").val("");
                     } else {
                         apiError(response);
                     }
@@ -113,6 +121,35 @@ var RoomControls = (function($) {
             apiError(response);
             $("#trackLink").addClass("is-invalid");
         }
+    }
+
+    function processTrackSearchResponse(response) {
+        if (response.StatusCode == 200)
+        {
+            var tracks = response.Payload.tracks.items;
+            var $trackSearchTemplate = $("[data-template='track-search-listing']");
+
+            tracks.forEach(track => {
+                var $trackSearch = $trackSearchTemplate.clone();
+
+                $trackSearch.find("[data-field='artwork']").attr("src", track.album.images[0].url);
+
+                var artists = track.artists.map(function(a) { return a.name}).join(", ");
+                $trackSearch.find("[data-field='TrackTitle']").html(track.name);
+
+                $trackSearch.find("[data-field='Artist']").html(artists);
+                $trackSearch.find("[data-field='Album']").html(track.album.name);
+
+                $trackSearch.find("[data-field='QueueTrack']").attr("onclick", "RoomControls.VerifyTrackId('"+track.id+"');")
+
+                $trackSearch.removeClass("hidden");
+                $("#track-search-results").append($trackSearch);
+            });
+        }
+        else {
+            $("#track-search-results").append("<p>Failed to get search results: " + response.Message + "</p>");
+        }
+
     }
 
     function enableQueueButton() {
@@ -158,6 +195,9 @@ var RoomControls = (function($) {
         },
         SubmitToQueue: function() {
             return submitToQueue();
+        },
+        SearchSong:function() {
+            return searchSong();
         },
         VerifyTrackId: function(trackId) {
             return verifyTrackId(trackId)

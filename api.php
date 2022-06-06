@@ -115,6 +115,11 @@
 				$track_uri = $payload["TrackUri"];
 				$response = $DISpotify->AddTrackToQueue($RoomSession->GetAccessToken(), $track_uri);
 			}
+			else if ($action == "Search")
+			{
+				$search_string = $payload["SearchText"];
+				$response = $DISpotify->Search($RoomSession->GetAccessToken(), $search_string);
+			}
 		}
 	}
 	else 

@@ -82,6 +82,11 @@
             return $this->SendSpotifyAPIRequest("v1", "/me/player/queue?uri=".urlencode($trackUri), $access_token, "POST", null);
         }
 
+        function Search($access_token, $searchString)
+        {
+            return $this->SendSpotifyAPIRequest("v1", "/search?q=".urlencode($searchString)."&type=track", $access_token, "GET", null);
+        }
+
         function SendSpotifyAPIRequest($api_version, $api_endpoint, $access_token, $method, $data)
         {
             
