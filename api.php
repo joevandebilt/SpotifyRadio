@@ -79,47 +79,68 @@
 			$RoomSessionResponse= $DISession->GetSessionByRoomCode($room_code);
 			$RoomSession = $RoomSessionResponse->GetPayload();
 
-			if ($action == "RoomReady")
+			if ($RoomSession != null)
 			{
-				if ($RoomSession != null && strlen($RoomSession->GetAccessToken()) > 0)
+				//Update the expiry time of the session token
+				$refresh_token = $RoomSession->GetRefreshToken();
+				$spotify_response = $DISpotify->GetAccessTokenFromRefresh($refresh_token);
+
+				if ($spotify_response != null) 
 				{
-					$response->SetMessage(null);
-					$roomName = $RoomSession->GetRoomName();
-					if ($roomName != null)
+					$currentTime = time();
+					$expiry = $spotify_response->expires_in;
+					$expiryTime = $currentTime + $expiry; 
+					$accessToken = $spotify_response->access_token;
+					$response = $DISession->UpdateSession($RoomSession->GetSessionID(), $accessToken, null, $expiry, $expiryTime, null, null);
+				}
+
+				if ($action == "RoomReady")
+				{
+					if (strlen($RoomSession->GetAccessToken()) > 0)
 					{
-						$response->SetPayload($roomName);
-						$response->SetStatusCode(200);
-					}
-					else 
-					{
-						$response->SetPayload(null);
-						$response->SetStatusCode(204);
+						$response->SetMessage(null);
+						$roomName = $RoomSession->GetRoomName();
+						if ($roomName != null)
+						{
+							$response->SetPayload($roomName);
+							$response->SetStatusCode(200);
+						}
+						else 
+						{
+							$response->SetPayload(null);
+							$response->SetStatusCode(204);
+						}
 					}
 				}
+				else if ($action == "GetUserInfo")
+				{
+					$response = $DISpotify->GetActiveUserInfo($RoomSession->GetAccessToken());
+				}
+				else if ($action == "GetCurrentTrack")
+				{
+					$response = $DISpotify->GetCurrentTrack($RoomSession->GetAccessToken());
+				}
+				else if ($action == "GetTrackInfo")
+				{
+					$track_uri = $payload["TrackUri"];
+					$response = $DISpotify->GetTrackById($RoomSession->GetAccessToken(), $track_uri);
+				}
+				else if ($action == "QueueTrack")
+				{
+					$track_uri = $payload["TrackUri"];
+					$response = $DISpotify->AddTrackToQueue($RoomSession->GetAccessToken(), $track_uri);
+				}
+				else if ($action == "Search")
+				{
+					$search_string = $payload["SearchText"];
+					$response = $DISpotify->Search($RoomSession->GetAccessToken(), $search_string);
+				}
 			}
-			else if ($action == "GetUserInfo")
+			else 
 			{
-				$response = $DISpotify->GetActiveUserInfo($RoomSession->GetAccessToken());
+				$response->SetMessage("Failed to find room session with room code");
 			}
-			else if ($action == "GetCurrentTrack")
-			{
-				$response = $DISpotify->GetCurrentTrack($RoomSession->GetAccessToken());
-			}
-			else if ($action == "GetTrackInfo")
-			{
-				$track_uri = $payload["TrackUri"];
-				$response = $DISpotify->GetTrackById($RoomSession->GetAccessToken(), $track_uri);
-			}
-			else if ($action == "QueueTrack")
-			{
-				$track_uri = $payload["TrackUri"];
-				$response = $DISpotify->AddTrackToQueue($RoomSession->GetAccessToken(), $track_uri);
-			}
-			else if ($action == "Search")
-			{
-				$search_string = $payload["SearchText"];
-				$response = $DISpotify->Search($RoomSession->GetAccessToken(), $search_string);
-			}
+
 		}
 	}
 	else 
