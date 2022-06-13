@@ -1,5 +1,7 @@
 var RoomControls = (function($) {
 
+    var progressBarInterval;
+
     $(document).ready(function() {
         if ($("#room").length > 0) 
         {
@@ -24,6 +26,7 @@ var RoomControls = (function($) {
     }
 
     function getCurrentTrack() {
+        clearInterval(progressBarInterval);
         APIRequest("GetCurrentTrack", null, (response) => {
             if (response.StatusCode == 200) {
                 var meta = response.Payload;
@@ -31,7 +34,7 @@ var RoomControls = (function($) {
                 
                 $("#nowPlayingImage").attr("src", track.album.images[0].url);
 
-                var link ="<a class='btn btn-lg btn-link text-primary ps-0 ms-0' href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
+                var link ="<a class='btn btn-lg btn-link text-primary ps-0 ms-0 no-underline' href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
                 $("#nowPlayingTrack").html(link);
 
                 var artists = track.artists.map(function(a) { return a.name}).join(", ");
@@ -44,6 +47,15 @@ var RoomControls = (function($) {
 
                 var triggerAgain = track.duration_ms - meta.progress_ms + 1000;
                 setTimeout(getCurrentTrack, triggerAgain);
+
+                var percentagePerSecond = (100 / (track.duration_ms / 1000)).toFixed(2);
+                var currentPercentPlayed = (meta.progress_ms /  track.duration_ms) * 100;
+                $("#progressBar").attr("data-percentagepersecond", percentagePerSecond);
+
+
+                $("#progressBar").css("width", currentPercentPlayed+"%");
+                
+                progressBarInterval= setInterval(increasePercentage, 1000);
             } 
             else if (response.StatusCode == 204) {
                 disableQueueButton("No active player found");
@@ -52,6 +64,14 @@ var RoomControls = (function($) {
                 $("#nowPlayingPane").hide();
             }
         });
+    }
+
+    function increasePercentage() {
+        var percentage = $("#progressBar")[0].style.width;
+        var increase = parseFloat($("#progressBar").attr("data-percentagepersecond"));
+        
+        percentage = parseFloat(percentage.replace("%", ""));
+        $("#progressBar").css("width", percentage+increase+"%");        
     }
 
     function submitToQueue() {

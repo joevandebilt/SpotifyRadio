@@ -1,4 +1,4 @@
-<div class="mt-2 row align-middle" id="roomCodeControlPane">
+<div class="my-3 row align-middle" id="roomCodeControlPane">
     <h6 class="mb-3">Room Information</h6>
     <div class="col-sm-8 input-lg mb-3">		
         <label for="RoomName" class="form-label">Room Name</label>					
@@ -18,7 +18,7 @@
 
 <hr />
 
-<div class="mt-2 d-flex flex-row flex-wrap align-items-stretch gap-4" id="controlsPane">
+<div class="my-3 d-flex flex-row flex-wrap align-items-stretch gap-4" id="controlsPane">
     <button type="button" class="btn btn-lg btn-primary flex-grow-1 action-save" onclick="AdminControls.SaveRoomInfo()">
         <i class="fas fa-save"></i> Save Room
     </button>

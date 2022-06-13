@@ -17,11 +17,11 @@
 
 			<div class="tab-content p-0 m-0" id="tabContent">
 
-				<div class="tab-pane fade show active my-3" role="tabpanel" aria-labelledby="search-tab" id="tabSearch">
+				<div class="tab-pane fade show active my-3 py-4" role="tabpanel" aria-labelledby="search-tab" id="tabSearch">
 					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Search-Pane.php'); ?>					
 				</div>
 			
-				<div class="tab-pane fade my-3" role="tabpanel" aria-labelledby="link-tab" id="tabLinks">
+				<div class="tab-pane fade my-4 py4" role="tabpanel" aria-labelledby="link-tab" id="tabLinks">
 					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Queue-Link.php'); ?>
 				</div>
 

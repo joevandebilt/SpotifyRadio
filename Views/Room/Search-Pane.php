@@ -3,15 +3,15 @@
 </div>
 
 <div class="my-3 row" id="queuePane">      
-    <div class="col-sm-12 mt-2">
+    <div class="col-sm-12 my-3">
 
         <div class="form-group d-flex flex-row">
             <input type="text" class="form-control" id="trackSeach" name="trackSearch" />
-            <button type="button" class="btn btn-primary" onclick="RoomControls.SearchSong();">Search</button>
+            <button type="button" class="btn btn-primary ms-2" onclick="RoomControls.SearchSong();">Search</button>
         </div>
     </div>
 
-    <div class="col-sm-12 mt-3">
+    <div class="col-sm-12 my-3">
         <div class="list-group" id="track-search-results"></div>
         
         <div class="list-group-item border-0 row py-2 bg-dark d-flex flex-row hidden" data-template="track-search-listing">

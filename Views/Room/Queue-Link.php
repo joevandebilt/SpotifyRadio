@@ -1,9 +1,9 @@
-<div class="m-3 text-center" id="helpPane">
+<div class="my-3 text-center" id="helpPane">
     <p>Enter a Spotify song link to queue a track, to get a song link select track, share and Copy Link</p>
     <img src="/Images/ShareLink.PNG" class="img-fluid" />
 </div>
 
-<div class="m-3 row" id="queuePane">      
+<div class="my-3 row" id="queuePane">      
     <div class="col-sm-8 mt-2">
         <input type="text" class="form-control" id="trackLink" placeholder="Copy Link Here" required />
         <div class="invalid-feedback">Invalid Spotify Track link</div>
