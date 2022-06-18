@@ -1,4 +1,14 @@
 var AdminControls = (function($) {
+    
+    var myToast = null;
+    var expiryInterval = null;
+
+    const Severity = {
+        Success: "bg-success",
+        Warning: "bg-warning",
+        Danger: "bg-danger",
+        Info: "bg-info"
+      };
 
     $(document).ready(function() { 
         if ($("#authorize").length > 0) {
@@ -10,6 +20,9 @@ var AdminControls = (function($) {
             let r = (Math.random() + 1).toString(36).substring(5).toUpperCase();
             $("#RoomCode").val(r);
         });
+
+        var myToastEl = document.getElementById('RoomSavedToast');
+        myToast = bootstrap.Toast.getOrCreateInstance(myToastEl);
     });
 
     function InitDashboard(response)
@@ -54,11 +67,15 @@ var AdminControls = (function($) {
 
                 //Expiry
                 if (roomInfo.ExpiryTime !== null) {
+                    
+                    $("[data-expiry]").attr("data-expiry", roomInfo.ExpiryTime * 1000);
+                    
                     var expiryTime = new Date(roomInfo.ExpiryTime * 1000);
                     $("#connectionPane").append("<p>Connection Expires at " + expiryTime.toLocaleString() + "</p>");
 
-                    var diff = Math.abs(expiryTime - new Date());
-                    $("#expiryBanner").html("Room expires in " + Math.floor((diff/1000)/60) + " minutes");
+                    //Set the expiry timer for the counter
+                    expiryInterval = setInterval(handleExpiryTime, 1000);
+                    
                     debugOutput("Ready!");
                 }
             }
@@ -87,15 +104,54 @@ var AdminControls = (function($) {
             "RoomName": $("#RoomName").val(),
             "RoomCode": $("#RoomCode").val() 
         };
-        APIHandler.Send("Admin", "UpdateRoomCode", data, InitDashboard, apiError);
+        APIHandler.Send("Admin", "UpdateRoomCode", data, (response) => {
+            
+            if (response.StatusCode == 200) {
+                showToaster(data.RoomName, "Room Saved Successfully", Severity.Success);
+            } else {
+                showToaster(data.RoomName, "Room Save Failed to Save", Severity.Danger);
+            }
+
+            myToast.show();
+            InitDashboard(response);
+        }, apiError);
     }
 
     function extendConnection() {
-        APIHandler.Send("Admin", "ExtendTimeout", null, InitDashboard, apiError);
+        APIHandler.Send("Admin", "ExtendTimeout", null, (response) => {
+            if (response.StatusCode == 200) {
+                showToaster(null, "Room Expiry Extended", Severity.Info);
+            } else {
+                showToaster(null, "Failed to Extended Room Expiry", Severity.Warning);
+            }
+            InitDashboard(response);
+        }, apiError);
+    }
+
+    function handleExpiryTime() {
+        var expiryTime = parseInt($("[data-expiry]").attr("data-expiry"));
+        
+        var diff = Math.abs(expiryTime - new Date());
+        var secondsLeft = Math.floor(diff/1000);
+        
+        var displayMinutes = Math.floor(secondsLeft / 60);
+        var displaySeconds = secondsLeft % 60;
+        if (displaySeconds < 10) {
+            displaySeconds = "0"+displaySeconds;
+        }
+        
+        $("#expiryBanner").html("Session expires in " + displayMinutes + ":" + displaySeconds);
     }
 
     function disconnectSession() {
-        APIHandler.Send("Admin", "DisconnectSession", null, InitDashboard, apiError);
+        APIHandler.Send("Admin", "DisconnectSession", null, (response) => {
+            if (response.StatusCode == 200) {
+                showToaster(null, "Disconnected from Spotify Successfully", Severity.Success);
+            } else {
+                showToaster(null, "Failed to Disconnect from Spotify", Severity.Danger);
+            }
+            InitDashboard(response);
+        }, apiError);
     }
 
     function openAuthWindow() {
@@ -153,6 +209,36 @@ var AdminControls = (function($) {
 
         /* Copy the text inside the text field */
         navigator.clipboard.writeText(copyText.value);
+    }
+
+    function showToaster(Header, Message, SeverityOfPopup)
+    {
+        if (Header !== null && Header !== "") {
+            $("[data-field='RoomName']").html(Header);
+        }
+
+        if (Message !== null && Message !== "") {
+            $("[data-field='Result']").html(Message);
+        }
+
+        $("[data-field='Severity']").removeClassStartingWith('bg-');
+        if (SeverityOfPopup !== null)
+        {
+            if (SeverityOfPopup == Severity.Success)
+                $("[data-field='Severity']").addClass("bg-success");
+            else if (SeverityOfPopup == Severity.Danger)
+                $("[data-field='Severity']").addClass("bg-danger");
+            else if (SeverityOfPopup == Severity.Warning)
+                $("[data-field='Severity']").addClass("bg-warning");
+            else
+                $("[data-field='Severity']").addClass("bg-info");
+        }
+        else 
+        {
+            $("[data-field='Severity']").addClass("bg-success");
+        }
+
+        myToast.show();
     }
 
     return {

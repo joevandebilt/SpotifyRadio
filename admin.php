@@ -11,9 +11,16 @@
 				<li class="nav-item" role="presentation">
 					<button class="nav-link text-primary" id="share-tab" data-bs-toggle="tab" data-bs-target="#tabShare" type="button" role="tab" aria-controls="share" aria-selected="false">Share</button>
 				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link text-primary" id="debug-tab" data-bs-toggle="tab" data-bs-target="#tabDebug" type="button" role="tab" aria-controls="debug" aria-selected="false">Debug</button>
-				</li>
+				<?php 
+					if (!empty($_GET['Debug']))
+					{
+						?>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link text-primary" id="debug-tab" data-bs-toggle="tab" data-bs-target="#tabDebug" type="button" role="tab" aria-controls="debug" aria-selected="false">Debug</button>
+							</li>
+						<?php
+					}
+				?>
 			</ul>
 
 			<div class="tab-content p-0 m-0" id="tabContent">
@@ -33,5 +40,7 @@
 			</div>
 
 		</div>
+
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Room-Saved-Toast.php') ?>
 	</div>
 </main>
