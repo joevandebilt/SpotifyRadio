@@ -1,7 +1,7 @@
 <?php
     class DISpotify
     {
-        const scope = "user-read-private user-read-email user-modify-playback-state user-read-currently-playing";
+        const scope = "user-modify-playback-state user-read-currently-playing";
         const response_type = "code";
         const redirect_uri = "https://spotify.nkode.uk/authorize.php";  
 
