@@ -21,24 +21,24 @@
 			<div class="tab-content p-0 m-0" id="tabContent">
 
 				<div class="tab-pane fade show active my-3 py-4" role="tabpanel" aria-labelledby="search-tab" id="tabSearch">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Search-Pane.php'); ?>					
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Search-Pane.html'); ?>					
 				</div>
 			
 				<div class="tab-pane fade my-4 py4" role="tabpanel" aria-labelledby="link-tab" id="tabLinks">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Queue-Link.php'); ?>
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Queue-Link.html'); ?>
 				</div>
 
 				<div class="tab-pane fade my-4 py4" role="tabpanel" aria-labelledby="link-tab" id="tabShare">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.php'); ?>
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.html'); ?>
 				</div>
 
 			</div>
 
 		</div>
 
-		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Now-Playing.php') ?>
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Now-Playing.html') ?>
 
-		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Song-Toast.php') ?>
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Song-Toast.html') ?>
 
 	</div>
 

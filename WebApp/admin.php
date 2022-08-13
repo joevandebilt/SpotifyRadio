@@ -26,21 +26,21 @@
 			<div class="tab-content p-0 m-0" id="tabContent">
 
 				<div class="tab-pane fade show active mt-3" role="tabpanel" aria-labelledby="dashboard-tab" id="tabDashboard">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Connection-Panel.php'); ?>					
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Connection-Panel.html'); ?>					
 				</div>
 			
 				<div class="tab-pane fade mt-3" role="tabpanel" aria-labelledby="share-tab" id="tabShare">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.php'); ?>
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.html'); ?>
 				</div>
 
 				<div class="tab-pane fade mt-3" role="tabpanel" aria-labelledby="debug-tab" id="tabDebug">
-					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Debug-Panel.php'); ?>
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Debug-Panel.html'); ?>
 				</div>
 
 			</div>
 
 		</div>
 
-		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Room-Saved-Toast.php') ?>
+		<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Room-Saved-Toast.html') ?>
 	</div>
 </main>
