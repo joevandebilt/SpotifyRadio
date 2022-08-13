@@ -9,6 +9,15 @@
   <title>Spotify Radio</title>  
 </head>
 <body class="bg-dark text-primary">
+
+<div class="overlay hidden" id="loader-overlay">
+  <div class="overlay-content">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
 <div class="container mt-2">
   <?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Global/Header.php'); ?>
   <div class="mt-3 p-0">

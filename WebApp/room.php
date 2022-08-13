@@ -13,6 +13,9 @@
 				<li class="nav-item" role="presentation">
 					<button class="nav-link text-primary" id="link-tab" data-bs-toggle="tab" data-bs-target="#tabLinks" type="button" role="tab" aria-controls="link" aria-selected="false">Exact Link</button>
 				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link text-primary" id="link-tab" data-bs-toggle="tab" data-bs-target="#tabShare" type="button" role="tab" aria-controls="link" aria-selected="false">Share</button>
+				</li>
 			</ul>
 
 			<div class="tab-content p-0 m-0" id="tabContent">
@@ -23,6 +26,10 @@
 			
 				<div class="tab-pane fade my-4 py4" role="tabpanel" aria-labelledby="link-tab" id="tabLinks">
 					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Room/Queue-Link.php'); ?>
+				</div>
+
+				<div class="tab-pane fade my-4 py4" role="tabpanel" aria-labelledby="link-tab" id="tabShare">
+					<?php require_once($_SERVER['DOCUMENT_ROOT'].'/Views/Admin/Share-Panel.php'); ?>
 				</div>
 
 			</div>

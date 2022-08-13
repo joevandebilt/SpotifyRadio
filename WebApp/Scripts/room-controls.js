@@ -21,6 +21,18 @@ var RoomControls = (function($) {
             {
                 $("#subHeader").html("Connected to "+roomResponse.Payload);
                 getCurrentTrack();
+
+                var currentUrl = window.location.href;
+
+                $("#roomLink").attr("href", currentUrl);
+                $("#roomLink").html("/room/" + getRoomCode());
+                $("#qrCodeImage").attr("src", generateQR(currentUrl));
+
+
+                var cleanUrl = currentUrl.replace("https://", "");
+                $("#facebookShare").attr("href", "https://www.facebook.com/sharer/sharer.php?u="+cleanUrl);
+                $("#twitterShare").attr("href", "https://twitter.com/intent/tweet?text=Join%20my%20Spotify%20room%20"+cleanUrl)
+
             }
         });
     }
@@ -193,17 +205,24 @@ var RoomControls = (function($) {
         console.log(thrownError);
     }
 
-    function APIRequest(Action, Data, Callback) {
-
-        var pathName = window.location.pathname;
-        var urlParams = pathName.split('/');
-        
+    function APIRequest(Action, Data, Callback) {        
         //Append Room Code to Payload
         if (Data == null) { Data = {}; }
-        Data.RoomCode = urlParams[urlParams.length-1];
+        Data.RoomCode = getRoomCode();
 
         //Send the Request via the API Handler
         APIHandler.Send("Room", Action, Data, Callback, apiError);
+    }
+
+    function getRoomCode() {
+        var pathName = window.location.pathname;
+        var urlParams = pathName.split('/');
+        
+        return urlParams[urlParams.length-1];
+    }
+
+    function generateQR(currentUrl) {
+        return "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chs=400x400&chl="+currentUrl;
     }
 
     return {

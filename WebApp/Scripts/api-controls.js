@@ -2,6 +2,7 @@ var APIHandler = (function($) {
 
     function sendRequestToAPI(area, action, payload, successcallback, failurecallback)
     {
+        startRequestOverlay();
         grecaptcha.ready(function() {
             grecaptcha.execute(recaptchaSiteKey(), {action: 'submit'}).then(function(token) {
                 // Add your logic to submit to your backend server here.
@@ -18,11 +19,25 @@ var APIHandler = (function($) {
                         "Payload": payload,
                         "RecpatchaToken": token
                     }),
-                    success: successcallback,
-                    error: failurecallback
+                    success: function(response) {
+                        successcallback(response);
+                        endRequestOverlay();
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        failurecallback(xhr, ajaxOptions, thrownError);
+                        endRequestOverlay();
+                    }
                 });
             });
         });
+    }
+
+    function startRequestOverlay() {
+        $("#loader-overlay").removeClass("hidden");
+    }
+
+    function endRequestOverlay() {
+        $("#loader-overlay").addClass("hidden");
     }
 
     return {
