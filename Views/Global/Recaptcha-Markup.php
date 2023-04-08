@@ -1,0 +1,1 @@
+class="g-recaptcha" data-sitekey="<?php echo Secrets::$RECAPTCHA_SITE_KEY; ?>" data-callback='recaptchaSubmit' data-action='submit'

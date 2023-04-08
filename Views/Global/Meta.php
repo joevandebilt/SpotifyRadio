@@ -5,17 +5,15 @@
 <meta property="og:url"                content="<?php echo GetWebsiteURL(); ?>"/>
 <meta property="og:type"               content="website" />
 
-<?php 
-    if (empty($_GET['RoomCode'])) 
+<?php
+    if (empty($_GET['RoomCode']))
     {
         ?>
-        
             <meta property="og:title"              content="nKode Spotify Radio" />
             <meta property="og:description"        content="Let anybody queue songs to your Spotify device" />
-        
         <?php
     }
-    else 
+    else
     {
 
         $DISession = new DISession();
@@ -26,7 +24,7 @@
 
             <meta property="og:title"              content="Join <?php echo $RoomSession->RoomName; ?>'s nKode Spotify Radio" />
             <meta property="og:description"        content="Let anybody queue songs to your Spotify device" />
-        
+
         <?php
     }
 ?>

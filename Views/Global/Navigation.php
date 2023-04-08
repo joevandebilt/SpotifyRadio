@@ -22,7 +22,7 @@
           <a class="nav-link text-primary" href="/privacy">Privacy</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-primary" href="https://github.com/joevandebilt/SpotifyRadio">Source Code</a>
+          <a class="nav-link text-primary" href="https://github.com/joevandebilt/SpotifyRadio" target="_blank">Source Code</a>
         </li>
       </ul>
     </div>

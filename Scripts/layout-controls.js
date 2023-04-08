@@ -6,7 +6,6 @@ $(document).ready(function() {
 
     //console.log(placeholderMain);
     //console.log(contentMain);
-
     if ($placeholderMain.length > 0 && $contentMain.length > 0)
     {
         //Replace the placeholder
