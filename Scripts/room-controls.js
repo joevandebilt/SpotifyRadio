@@ -46,11 +46,12 @@ var RoomControls = (function($) {
                 
                 $("#nowPlayingImage").attr("src", track.album.images[0].url);
 
-                var link ="<a class='btn btn-lg btn-link text-primary ps-0 ms-0 no-underline' href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
+                var link = "<a class='btn btn-lg btn-link text-primary ps-0 ms-0 no-underline' href='"+track.external_urls.spotify+"'>"+track.name+"</a>";
                 $("#nowPlayingTrack").html(link);
 
                 var artists = track.artists.map(function(a) { return a.name}).join(", ");
-                $("#nowPlayingArtist").html(artists);
+                link = "<a class='btn btn-lg btn-link text-primary ps-0 pb-0 ms-0 no-underline' href='"+track.artists[0].external_urls.spotify+"'>"+artists+"</a>";
+                $("#nowPlayingArtist").html(link);
 
                 var time = track.duration_ms / 1000;
                 var minutes = Math.floor(time / 60);
