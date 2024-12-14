@@ -17,7 +17,7 @@ var AdminControls = (function($) {
         }
 
         $(".action-random").on('click', function(){
-            let r = (Math.random() + 1).toString(36).substring(5).toUpperCase();
+            let r = (Math.random() + 1).toString(36).substring(9).toUpperCase();
             $("#RoomCode").val(r);
         });
 

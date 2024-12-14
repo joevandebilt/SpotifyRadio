@@ -135,12 +135,15 @@
 					$search_string = $payload["SearchText"];
 					$response = $DISpotify->Search($RoomSession->GetAccessToken(), $search_string);
 				}
+				else if ($action = "GetQueue") 
+				{
+					$response = $DISpotify->GetQueue($RoomSession->GetAccessToken());
+				}
 			}
 			else 
 			{
 				$response->SetMessage("Failed to find room session with room code");
 			}
-
 		}
 	}
 	else 

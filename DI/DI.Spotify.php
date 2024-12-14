@@ -77,6 +77,11 @@
             return $this->SendSpotifyAPIRequest("v1", "/tracks/".$trackId, $access_token, "GET", null);
         }
 
+        function GetQueue($access_token)
+        {
+            return $this->SendSpotifyAPIRequest("v1", "/me/player/queue", $access_token, "GET", null);
+        }
+
         function AddTrackToQueue($access_token, $trackUri)
         {
             return $this->SendSpotifyAPIRequest("v1", "/me/player/queue?uri=".urlencode($trackUri), $access_token, "POST", null);
