@@ -25,7 +25,23 @@
     background-color: var(--bs-darker);
 }
 
-#nowPlayingImage {
+@media only screen and (max-width: 768px) {
+    #nextUpList {
+      display: none !important;
+    }
+
+    .tab-pane {
+        margin-bottom: 150px;
+    }
+  }
+
+
+.nextUpSeperator {
+    margin: auto;
+    padding: 0 24px;
+}
+
+.album-artwork {
     max-height: 100px;
     height: 100px;
     min-height: 100px;
