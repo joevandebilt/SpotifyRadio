@@ -249,7 +249,8 @@ var RoomControls = (function ($) {
     }
 
     function generateQR(currentUrl) {
-        return "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chs=400x400&chl=" + currentUrl;
+        return "https://quickchart.io/qr?text="+currentUrl;
+        //return "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chs=400x400&chl=" + currentUrl;
     }
 
     return {

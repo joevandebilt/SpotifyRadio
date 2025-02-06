@@ -174,7 +174,8 @@ var AdminControls = (function($) {
     }
 
     function generateQR() {
-        return "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chs=400x400&chl="+roomUrl();
+        return "https://quickchart.io/qr?text="+roomUrl();
+        //return "https://chart.googleapis.com/chart?cht=qr&choe=UTF-8&chs=400x400&chl="+roomUrl();
     }
 
     function apiError(xhr, ajaxOptions, thrownError) {
