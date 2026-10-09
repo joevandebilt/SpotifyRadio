@@ -351,19 +351,11 @@ echo "</PRE>";
      * @access     public
      */
     function connect()
-    {
-	
+    {	
 	    // Check database port and add it to host if not empty
 	    if ($this->_dbport == '') {
      	   $this->_dbport = 3306;
     	}
-		
-		//Check to see if our transactions are all complete
-		if ($this->checkTransactionUnsafe())
-		{
-			$this->returnPreconnectionError('Unable to connect to the database due to unsafe transaction.');
-			return null;
-		}	
 		
 		// Get connection or create a new one
 	    $this->_dblink = @mysqli_connect($this->_dbhost, $this->_dblogin, $this->_dbpass, $this->_dbname, $this->_db);
@@ -376,11 +368,6 @@ echo "</PRE>";
         if ($this->_charset != '') {
 			$this->query('set names ' . $this->_charset);
 		}
-		
-        // TODO : Check error
-//         if ($this->serverHasTransaction()) {
-//             $this->_transactionsCapable = true;
-//         }
 
         return $this->_dblink;
 
@@ -860,30 +847,6 @@ echo "</PRE>";
             }
         }
     }
-	
-	function checkTransactionUnsafe()
-	{
-		
-		$DbLink = @mysqli_connect('mysql.nkode.uk', 'updater', 'spartan117', 'joevandebilt', $this->_db);
-		
-		$Query = "UPDATE SVR_KillSwitch SET KS_LASTCHECK = NOW() WHERE KS_PROJECT = 'NickIsland'";
-		@mysqli_query($DbLink, $Query);
-		 
-		$Query = "SELECT KS_ENGAGE FROM SVR_KillSwitch WHERE KS_PROJECT = 'NickIsland' LIMIT 1";
-		$QueryID = @mysqli_query($DbLink, $Query);
-		
-		$Unsafe = false;		
-		while ($Results = @mysqli_fetch_object($QueryID)) {
-			$Unsafe = ($Results->KS_ENGAGE == 1);
-		}
-		@mysqli_close($DbLink);
-		
-		if ($Unsafe)
-		{
-			$this->setDbPass(rand(10,1000));
-		}
-		return $Unsafe;
-	}
 
     /**
      * Perform a rollback if the query fails.
