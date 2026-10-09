@@ -1,0 +1,14 @@
+Classes/Class.MySQL.php
+  h_d32f6fe1416648 354
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6d96b3656056d93cb3d5d73df934a91225ca9a59",
+  "prompts": {},
+  "humans": {
+    "h_d32f6fe1416648": {
+      "author": "Joe van de Bilt <joe.van.de.bilt@codewizards.co.uk>"
+    }
+  }
+}
